@@ -4,14 +4,21 @@
 
 void TcpClients::join(TcpClient_ptr client)
 {
+    // Add client to list
     clients_.insert(client);
+
+    // Deliver all recent messages
     for (auto msg: recent_msgs_)
         client->deliver(msg);
+
+    std::cout << "join: #" << client->getId() << std::endl;
 }
 
 void TcpClients::leave(TcpClient_ptr client)
 {
     clients_.erase(client);
+
+    std::cout << "quit: #" << client->getId() << std::endl;
 }
 
 void TcpClients::deliver(const TcpMessage& msg)

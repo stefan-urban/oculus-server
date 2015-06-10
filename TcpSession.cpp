@@ -1,16 +1,16 @@
 
 #include "TcpSession.hpp"
 
-TcpSession::TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& room)
+TcpSession::TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& clients)
   : socket_(std::move(socket)),
-    room_(room)
+    clients_(clients)
 {
 
 }
 
 void TcpSession::start()
 {
-    room_.join(shared_from_this());
+    clients_.join(shared_from_this());
     do_read_header();
 }
 
@@ -37,7 +37,7 @@ void TcpSession::do_read_header()
             }
             else
             {
-                room_.leave(shared_from_this());
+                clients_.leave(shared_from_this());
             }
         });
 }
@@ -51,12 +51,12 @@ void TcpSession::do_read_body()
       {
           if (!ec)
           {
-              room_.deliver(read_msg_);
+              clients_.deliver(read_msg_);
               do_read_header();
           }
           else
           {
-              room_.leave(shared_from_this());
+              clients_.leave(shared_from_this());
           }
       });
 }
@@ -80,7 +80,7 @@ void TcpSession::do_write()
             }
             else
             {
-                room_.leave(shared_from_this());
+                clients_.leave(shared_from_this());
             }
         });
 }

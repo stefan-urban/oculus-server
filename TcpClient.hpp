@@ -5,12 +5,28 @@
 
 #include "TcpMessage.hpp"
 
+
+static int next_id = 0;
+
 class TcpClient
 {
+    int id;
 public:
-  virtual ~TcpClient() {}
-  virtual void deliver(const TcpMessage& msg) = 0;
+    TcpClient() : id(next_id++)
+    {
+
+    }
+
+    int getId()
+    {
+        return id;
+    }
+
+    virtual ~TcpClient() {}
+    virtual void deliver(const TcpMessage& msg) = 0;
+private:
 };
+
 
 typedef std::shared_ptr<TcpClient> TcpClient_ptr;
 

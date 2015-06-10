@@ -7,7 +7,6 @@
 
 #include "TcpServer.hpp"
 
-
 int main(int argc, char* argv[])
 {
     std::cout << "oculus-server v1" << std::endl;

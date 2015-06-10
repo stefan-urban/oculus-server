@@ -20,7 +20,7 @@ private:
     void do_write();
 
     boost::asio::ip::tcp::socket socket_;
-    TcpClients& room_;
+    TcpClients& clients_;
     TcpMessage read_msg_;
     TcpMessageQueue write_msgs_;
 };
