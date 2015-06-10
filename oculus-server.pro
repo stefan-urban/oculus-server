@@ -13,12 +13,21 @@ SOURCES += \
     TcpClients.cpp \
     TcpServer.cpp \
     TcpSession.cpp \
-    TcpMessage.cpp
+    TcpMessage.cpp \
+    vendor/edvstools/Edvs/EventIO.cpp \
+    vendor/edvstools/Edvs/EventStream.cpp \
+    vendor/edvstools/Edvs/edvs.c
 
 HEADERS += \
     TcpMessage.hpp \
     TcpSession.hpp \
     TcpClient.hpp \
     TcpServer.hpp \
-    TcpClients.hpp
+    TcpClients.hpp \
+    vendor/edvstools/Edvs/edvs.h \
+    vendor/edvstools/Edvs/edvs_impl.h \
+    vendor/edvstools/Edvs/event.h \
+    vendor/edvstools/Edvs/Event.hpp \
+    vendor/edvstools/Edvs/EventIO.hpp \
+    vendor/edvstools/Edvs/EventStream.hpp
 

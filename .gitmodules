@@ -1,0 +1,3 @@
+[submodule "edvstools"]
+	path = vendor/edvstools/
+	url = git@github.com:Danvil/edvstools.git
