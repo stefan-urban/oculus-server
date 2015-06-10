@@ -8,9 +8,8 @@ TcpSession::TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& room)
 
 }
 
-void TcpSession::start(int i)
+void TcpSession::start()
 {
-    id = i;
     room_.join(shared_from_this());
     do_read_header();
 }

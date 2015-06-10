@@ -2,16 +2,16 @@
 #include "TcpClients.hpp"
 
 
-void TcpClients::join(TcpClient_ptr participant)
+void TcpClients::join(TcpClient_ptr client)
 {
-    participants_.insert(participant);
+    clients_.insert(client);
     for (auto msg: recent_msgs_)
-        participant->deliver(msg);
+        client->deliver(msg);
 }
 
-void TcpClients::leave(TcpClient_ptr participant)
+void TcpClients::leave(TcpClient_ptr client)
 {
-    participants_.erase(participant);
+    clients_.erase(client);
 }
 
 void TcpClients::deliver(const TcpMessage& msg)
@@ -20,6 +20,6 @@ void TcpClients::deliver(const TcpMessage& msg)
     while (recent_msgs_.size() > max_recent_msgs)
         recent_msgs_.pop_front();
 
-    for (auto participant: participants_)
+    for (auto participant: clients_)
         participant->deliver(msg);
 }

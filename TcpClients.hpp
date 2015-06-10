@@ -14,7 +14,7 @@ public:
     void deliver(const TcpMessage& msg);
 
 private:
-    std::set<TcpClient_ptr> participants_;
+    std::set<TcpClient_ptr> clients_;
     enum { max_recent_msgs = 100 };
     TcpMessageQueue recent_msgs_;
 };

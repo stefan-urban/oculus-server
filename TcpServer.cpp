@@ -15,11 +15,9 @@ void TcpServer::do_accept()
   acceptor_.async_accept(socket_,
       [this](boost::system::error_code ec)
       {
-          static int i = 0;
-
           if (!ec)
           {
-              std::make_shared<TcpSession>(std::move(socket_), room_)->start(i);
+              std::make_shared<TcpSession>(std::move(socket_), room_)->start();
           }
 
           do_accept();

@@ -12,14 +12,13 @@ class TcpSession
 {
 public:
     TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& room);
-    void start(int i);
+    void start();
     void deliver(const TcpMessage& msg);
 private:
     void do_read_header();
     void do_read_body();
     void do_write();
 
-    int id;
     boost::asio::ip::tcp::socket socket_;
     TcpClients& room_;
     TcpMessage read_msg_;
