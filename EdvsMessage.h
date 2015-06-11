@@ -13,8 +13,10 @@ public:
     }
 
     void set_events(EdvsEventsCollection);
+    EdvsEventsCollection get_events();
 
 private:
+    const int size_event = 14;
     int type_;
 };
 
