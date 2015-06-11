@@ -9,12 +9,13 @@
 class TcpMessage
 {
 public:
-    enum { header_length = 4 };
+    enum { header_length = 6 };
     enum { type_length = 2 };
-    enum { max_body_length = 4096 };
+    enum { max_body_length = 65536 };
 
     TcpMessage()
-    : body_length_(0)
+    : body_length_(0),
+      type_(0)
     {
     }
 
@@ -55,13 +56,20 @@ public:
             body_length_ = max_body_length;
     }
 
+    int type() const
+    {
+        return type_;
+    }
+
     bool decode_header();
     void encode_header();
 
 private:
-    int type = 0;
     char data_[header_length + max_body_length];
     std::size_t body_length_;
+
+protected:
+    int type_;
 };
 
 typedef std::deque<TcpMessage> TcpMessageQueue;

@@ -2,16 +2,13 @@
 
 #include <cstdio>
 
-EdvsMessage::EdvsMessage()
-{
-}
-
 void EdvsMessage::set_events(EdvsEventsCollection events)
 {
     const int size_event = 14;
     int number_events = events.size();
 
     char tmp[size_event * number_events + 1] = "";
+    tmp[size_event * number_events] = '\0';
 
     int i = 0;
     for (const Edvs::Event& event : events)
@@ -36,6 +33,6 @@ void EdvsMessage::set_events(EdvsEventsCollection events)
         i++;
     }
 
-    body_length(std::strlen(tmp));
+    body_length(size_event * number_events);
     std::memcpy(body(), tmp, body_length());
 }

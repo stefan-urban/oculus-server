@@ -7,11 +7,12 @@
 class EdvsMessage : public TcpMessage
 {
 public:
-    EdvsMessage();
-    void set_events(EdvsEventsCollection);
+    EdvsMessage()
+    {
+        type_ = 1;
+    }
 
-private:
-    std::string type = "1";
+    void set_events(EdvsEventsCollection);
 };
 
 #endif // EDVSMESSAGE_H

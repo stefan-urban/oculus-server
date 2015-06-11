@@ -17,7 +17,7 @@ bool TcpMessage::decode_header()
     // Get type
     char type_str[type_length + 1] = "";
     std::strncat(type_str, data_ + header_length, type_length);
-    type = std::atoi(type_str);
+    type_ = std::atoi(type_str);
 
     return true;
 }
@@ -25,6 +25,6 @@ bool TcpMessage::decode_header()
 void TcpMessage::encode_header()
 {
     char header[header_length + type_length + 1] = "";
-    std::sprintf(header, "%4d%2d", static_cast<int>(body_length_), static_cast<int>(type));
+    std::sprintf(header, "%6d%2d", static_cast<int>(body_length_), static_cast<int>(type_));
     std::memcpy(data_, header, header_length + type_length);
 }
