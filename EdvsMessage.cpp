@@ -7,6 +7,11 @@ void EdvsMessage::set_events(EdvsEventsCollection events)
     const int size_event = 14;
     int number_events = events.size();
 
+    if (number_events < 1)
+    {
+        return;
+    }
+
     char tmp[size_event * number_events + 1] = "";
     tmp[size_event * number_events] = '\0';
 

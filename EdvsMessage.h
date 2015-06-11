@@ -13,6 +13,9 @@ public:
     }
 
     void set_events(EdvsEventsCollection);
+
+private:
+    int type_;
 };
 
 #endif // EDVSMESSAGE_H

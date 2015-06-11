@@ -42,11 +42,13 @@ void edvs_thread(TcpServer *server)
 
         server->clients()->deliver(msg);
 
+        //delete(&msg);
+
         // After sending delete everything
         events_buffer.clear();
 
-        // Wait for 5 ms
-        usleep(5 * 1000);
+        // Wait for 1 s
+        usleep(1000 * 1000);
     }
 }
 

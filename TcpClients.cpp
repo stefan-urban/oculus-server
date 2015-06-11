@@ -7,8 +7,8 @@ void TcpClients::join(TcpClient_ptr client)
     clients_.insert(client);
 
     // Deliver all recent messages
-    for (auto msg: recent_msgs_)
-        client->deliver(msg);
+//    for (auto msg: recent_msgs_)
+//        client->deliver(msg);
 
     std::cout << "join: #" << client->getId() << std::endl;
 }
@@ -22,9 +22,9 @@ void TcpClients::leave(TcpClient_ptr client)
 
 void TcpClients::deliver(TcpMessage const& msg)
 {
-    recent_msgs_.push_back(msg);
-    while (recent_msgs_.size() > max_recent_msgs)
-        recent_msgs_.pop_front();
+//    recent_msgs_.push_back(msg);
+//    while (recent_msgs_.size() > max_recent_msgs)
+//        recent_msgs_.pop_front();
 
     for (auto client: clients_)
         client->deliver(msg);
