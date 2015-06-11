@@ -1,4 +1,3 @@
-
 #include "TcpServer.hpp"
 
 
@@ -7,7 +6,7 @@ TcpServer::TcpServer(boost::asio::io_service& io_service,
   : acceptor_(io_service, endpoint),
     socket_(io_service)
 {
-  do_accept();
+    do_accept();
 }
 
 void TcpServer::do_accept()
@@ -17,7 +16,7 @@ void TcpServer::do_accept()
       {
           if (!ec)
           {
-              std::make_shared<TcpSession>(std::move(socket_), room_)->start();
+              std::make_shared<TcpSession>(std::move(socket_), clients_)->start();
           }
 
           do_accept();

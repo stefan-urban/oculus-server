@@ -4,6 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG += c++11
 
+QMAKE_CFLAGS += -std=gnu11
+
 LIBS += -pthread
 LIBS += -lboost_system -lboost_thread
 
@@ -16,7 +18,9 @@ SOURCES += \
     TcpMessage.cpp \
     vendor/edvstools/Edvs/EventIO.cpp \
     vendor/edvstools/Edvs/EventStream.cpp \
-    vendor/edvstools/Edvs/edvs.c
+    vendor/edvstools/Edvs/edvs.c \
+    EdvsMessage.cpp \
+    EdvsEventsCollection.cpp
 
 HEADERS += \
     TcpMessage.hpp \
@@ -29,5 +33,7 @@ HEADERS += \
     vendor/edvstools/Edvs/event.h \
     vendor/edvstools/Edvs/Event.hpp \
     vendor/edvstools/Edvs/EventIO.hpp \
-    vendor/edvstools/Edvs/EventStream.hpp
+    vendor/edvstools/Edvs/EventStream.hpp \
+    EdvsEventsCollection.h \
+    EdvsMessage.h
 

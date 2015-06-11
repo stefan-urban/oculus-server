@@ -1,11 +1,54 @@
-
 #include <iostream>
 #include <deque>
 #include <set>
 #include <list>
 #include <boost/asio.hpp>
+#include <boost/thread.hpp>
 
 #include "TcpServer.hpp"
+#include "EdvsEventsCollection.h"
+#include "EdvsMessage.h"
+#include "vendor/edvstools/Edvs/EventStream.hpp"
+
+
+void edvs_thread(TcpServer *server)
+{
+    std::vector<std::string> p_vuri = {"127.0.0.1:7001 127.0.0.1:7002"};
+    EdvsEventsCollection events_buffer;
+
+    auto stream = Edvs::OpenEventStream(p_vuri);
+
+    if (stream->is_open())
+    {
+        //std::cout << "eDVS stream open" << std::endl;
+    }
+    else
+    {
+        std::cout << "eDVS stream NOT opened" << std::endl;
+        return;
+    }
+
+    while (1)
+    {
+        auto events = stream->read();
+
+        for(const Edvs::Event& e : events) {
+            events_buffer.push_back(e);
+        }
+
+        // Deliver all read events to connected devices
+        EdvsMessage msg;
+        msg.set_events(events_buffer);
+
+        server->clients()->deliver(msg);
+
+        // After sending delete everything
+        events_buffer.clear();
+
+        // Wait for 5 ms
+        usleep(5 * 1000);
+    }
+}
 
 int main(int argc, char* argv[])
 {
@@ -13,20 +56,12 @@ int main(int argc, char* argv[])
 
     try
     {
-        if (argc < 2)
-        {
-            std::cerr << "Usage: oculus-server <port> [<port> ...]\n";
-            return 1;
-        }
-
         boost::asio::io_service io_service;
 
-        std::list<TcpServer> servers;
-        for (int i = 1; i < argc; ++i)
-        {
-            boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), std::atoi(argv[i]));
-            servers.emplace_back(io_service, endpoint);
-        }
+        boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 4000);
+        TcpServer server(io_service, endpoint);
+
+        boost::thread et(edvs_thread, &server);
 
         io_service.run();
     }

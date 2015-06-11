@@ -1,13 +1,3 @@
-//
-// chat_message.hpp
-// ~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #ifndef TCP_MESSAGE_HPP
 #define TCP_MESSAGE_HPP
 
@@ -20,7 +10,8 @@ class TcpMessage
 {
 public:
     enum { header_length = 4 };
-    enum { max_body_length = 512 };
+    enum { type_length = 2 };
+    enum { max_body_length = 4096 };
 
     TcpMessage()
     : body_length_(0)
@@ -39,17 +30,17 @@ public:
 
     std::size_t length() const
     {
-        return header_length + body_length_;
+        return header_length + type_length + body_length_;
     }
 
     const char* body() const
     {
-        return data_ + header_length;
+        return data_ + header_length + type_length;
     }
 
     char* body()
     {
-        return data_ + header_length;
+        return data_ + header_length + type_length;
     }
 
     std::size_t body_length() const
@@ -68,6 +59,7 @@ public:
     void encode_header();
 
 private:
+    int type = 0;
     char data_[header_length + max_body_length];
     std::size_t body_length_;
 };

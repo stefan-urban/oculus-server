@@ -67,7 +67,6 @@ void TcpSession::do_write()
     boost::asio::async_write(socket_,
         boost::asio::buffer(write_msgs_.front().data(),
         write_msgs_.front().length()),
-        // Write handler
         [this, self](boost::system::error_code ec, std::size_t /*length*/)
         {
             if (!ec)

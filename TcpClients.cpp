@@ -1,4 +1,3 @@
-
 #include "TcpClients.hpp"
 
 
@@ -21,12 +20,12 @@ void TcpClients::leave(TcpClient_ptr client)
     std::cout << "quit: #" << client->getId() << std::endl;
 }
 
-void TcpClients::deliver(const TcpMessage& msg)
+void TcpClients::deliver(TcpMessage const& msg)
 {
     recent_msgs_.push_back(msg);
     while (recent_msgs_.size() > max_recent_msgs)
         recent_msgs_.pop_front();
 
-    for (auto participant: clients_)
-        participant->deliver(msg);
+    for (auto client: clients_)
+        client->deliver(msg);
 }

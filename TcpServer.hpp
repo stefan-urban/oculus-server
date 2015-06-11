@@ -12,12 +12,16 @@ public:
   TcpServer(boost::asio::io_service& io_service,
       const boost::asio::ip::tcp::endpoint& endpoint);
 
+  TcpClients* clients() {
+      return &clients_;
+  }
+
 private:
   void do_accept();
 
   boost::asio::ip::tcp::acceptor acceptor_;
   boost::asio::ip::tcp::socket socket_;
-  TcpClients room_;
+  TcpClients clients_;
 };
 
 
