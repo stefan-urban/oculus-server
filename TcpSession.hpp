@@ -13,7 +13,7 @@ class TcpSession
 public:
     TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& room);
     void start();
-    void deliver(const TcpMessage& msg);
+    void deliver(TcpMessage& msg);
 private:
     void do_read_header();
     void do_read_body();

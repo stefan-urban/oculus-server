@@ -6,8 +6,9 @@
 #include <boost/thread.hpp>
 
 #include "TcpServer.hpp"
-#include "EdvsEventsCollection.h"
-#include "EdvsMessage.h"
+#include "TcpMessage.hpp"
+#include "EdvsEventsCollection.hpp"
+#include "Message_EventCollection.hpp"
 #include "vendor/edvstools/Edvs/EventStream.hpp"
 
 
@@ -33,14 +34,34 @@ void edvs_thread(TcpServer *server)
         auto events = stream->read();
 
         for(const Edvs::Event& e : events) {
-            events_buffer.push_back(e);
+
+            Edvs::Event e1;
+
+            e1.id = 2;
+            e1.x = 44;
+            e1.y = 125;
+            e1.parity = 1;
+            e1.t = 45912738;
+
+            if (events_buffer.size() < 10)
+                events_buffer.push_back(e1);
         }
 
         // Deliver all read events to connected devices
-        EdvsMessage msg;
+        Message_EventCollection msg;
         msg.set_events(events_buffer);
 
-        server->clients()->deliver(msg);
+        //auto data = msg.serialize();
+
+        //Message_EventCollection msg2;
+        //msg2.unserialize(data);
+
+        // Wrap and send
+        TcpMessage tcpMsg;
+        tcpMsg.message(&msg);
+
+        server->clients()->deliver(tcpMsg);
+        std::cout << " --------------------------------------------------------- clients: " << server->clients()->clients_size() << std::endl;
 
         //delete(&msg);
 
@@ -48,7 +69,7 @@ void edvs_thread(TcpServer *server)
         events_buffer.clear();
 
         // Wait for 1 s
-        usleep(1000 * 1000);
+        usleep(100 * 1000);
     }
 }
 

@@ -1,5 +1,6 @@
 #include "TcpClients.hpp"
-
+#include "TcpMessage.hpp"
+#include "Message.hpp"
 
 void TcpClients::join(TcpClient_ptr client)
 {
@@ -20,7 +21,7 @@ void TcpClients::leave(TcpClient_ptr client)
     std::cout << "quit: #" << client->getId() << std::endl;
 }
 
-void TcpClients::deliver(TcpMessage const& msg)
+void TcpClients::deliver(TcpMessage& msg)
 {
 //    recent_msgs_.push_back(msg);
 //    while (recent_msgs_.size() > max_recent_msgs)

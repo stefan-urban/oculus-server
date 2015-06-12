@@ -23,7 +23,7 @@ public:
     }
 
     virtual ~TcpClient() {}
-    virtual void deliver(const TcpMessage& msg) = 0;
+    virtual void deliver(TcpMessage& msg) = 0;
 private:
 };
 

@@ -6,10 +6,13 @@
 #include <cstring>
 #include <deque>
 
+#include "Message.hpp"
+
+
 class TcpMessage
 {
 public:
-    enum { header_length = 6 };
+    enum { header_length = 4 };
     enum { max_body_length = 65536 };
 
     TcpMessage()
@@ -54,12 +57,21 @@ public:
             body_length_ = max_body_length;
     }
 
+    void message(Message *msg)
+    {
+        message_ = msg;
+    }
+
+    void encode();
+    void decode();
     bool decode_header();
     void encode_header();
 
 private:
     char data_[header_length + max_body_length];
     std::size_t body_length_;
+    Message *message_;
+
 };
 
 typedef std::deque<TcpMessage> TcpMessageQueue;

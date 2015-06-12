@@ -7,7 +7,7 @@ CONFIG += c++11
 QMAKE_CFLAGS += -std=gnu11
 
 LIBS += -pthread
-LIBS += -lboost_system -lboost_thread
+LIBS += -lboost_system -lboost_thread -lboost_serialization
 
 SOURCES += \
     main.cpp \
@@ -19,8 +19,10 @@ SOURCES += \
     vendor/edvstools/Edvs/EventIO.cpp \
     vendor/edvstools/Edvs/EventStream.cpp \
     vendor/edvstools/Edvs/edvs.c \
-    EdvsMessage.cpp \
-    EdvsEventsCollection.cpp
+    EdvsEventsCollection.cpp \
+    EdvsMessage_DebugInformation.cpp \
+    Message.cpp \
+    Message_EventCollection.cpp
 
 HEADERS += \
     TcpMessage.hpp \
@@ -34,6 +36,8 @@ HEADERS += \
     vendor/edvstools/Edvs/Event.hpp \
     vendor/edvstools/Edvs/EventIO.hpp \
     vendor/edvstools/Edvs/EventStream.hpp \
-    EdvsEventsCollection.h \
-    EdvsMessage.h
+    EdvsEventsCollection.hpp \
+    EdvsMessage_DebugInformation.hpp \
+    Message.hpp \
+    Message_EventCollection.hpp
 

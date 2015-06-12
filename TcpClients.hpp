@@ -11,7 +11,11 @@ class TcpClients
 public:
     void join(TcpClient_ptr participant);
     void leave(TcpClient_ptr participant);
-    void deliver(const TcpMessage& msg);
+    void deliver(TcpMessage& msg);
+    std::size_t clients_size()
+    {
+        return clients_.size();
+    }
 
 private:
     std::set<TcpClient_ptr> clients_;

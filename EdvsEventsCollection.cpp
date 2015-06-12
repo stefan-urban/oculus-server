@@ -1,4 +1,4 @@
-#include "EdvsEventsCollection.h"
+#include "EdvsEventsCollection.hpp"
 
 EdvsEventsCollection::EdvsEventsCollection()
 {

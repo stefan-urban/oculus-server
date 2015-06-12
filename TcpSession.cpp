@@ -14,8 +14,11 @@ void TcpSession::start()
     do_read_header();
 }
 
-void TcpSession::deliver(const TcpMessage& msg)
+void TcpSession::deliver(TcpMessage& msg)
 {
+    // First prepare message
+    msg.encode();
+
     bool write_in_progress = !write_msgs_.empty();
     write_msgs_.push_back(msg);
     if (!write_in_progress)
@@ -33,6 +36,7 @@ void TcpSession::do_read_header()
         {
             if (!ec && read_msg_.decode_header())
             {
+                // Now we know how long the message is, finally read it
                 do_read_body();
             }
             else
@@ -51,7 +55,10 @@ void TcpSession::do_read_body()
       {
           if (!ec)
           {
-              clients_.deliver(read_msg_);
+              // Handle message
+              read_msg_.decode();
+
+              // And go back to reading the header
               do_read_header();
           }
           else
