@@ -1,7 +1,9 @@
-#include <iostream>
+﻿#include <iostream>
 #include <deque>
 #include <set>
 #include <list>
+#include <random>
+#include <time.h>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
@@ -12,11 +14,14 @@
 #include "vendor/edvstools/Edvs/EventStream.hpp"
 
 
+#define DEBUG 1
+
 void edvs_thread(TcpServer *server)
 {
     std::vector<std::string> p_vuri = {"127.0.0.1:7001 127.0.0.1:7002"};
     EdvsEventsCollection events_buffer;
 
+#if DEBUG == 0
     auto stream = Edvs::OpenEventStream(p_vuri);
 
     if (stream->is_open())
@@ -28,15 +33,36 @@ void edvs_thread(TcpServer *server)
         std::cout << "eDVS stream NOT opened" << std::endl;
         return;
     }
+#endif
 
     while (1)
     {
+#if DEBUG == 0
         auto events = stream->read();
 
         for(const Edvs::Event& e : events) {
+            events_buffer.push_back(e);
+        }
+#else
+        EdvsEventsCollection events;
+
+        for (int i = 0; i < 10; i++)
+        {
+            Edvs::Event e;
+
+            e.id = rand() % 7;
+            e.x = rand() % 128;
+            e.y = rand() % 128;
+            e.parity = rand() % 2;
+
+            // Contious timestamp in us (no clear time reference)
+            struct timespec t;
+            clock_gettime(CLOCK_MONOTONIC, &t);
+            e.t = 1000000ull*(uint64_t)(t.tv_sec) + (uint64_t)(t.tv_nsec)/1000ull;
 
             events_buffer.push_back(e);
         }
+#endif
 
         if (events_buffer.size() > 0)
         {
@@ -49,7 +75,10 @@ void edvs_thread(TcpServer *server)
             tcpMsg.message(&msg);
 
             server->clients()->deliver(tcpMsg);
-            std::cout << " --------------------------------------------------------- clients: " << server->clients()->clients_size() << std::endl;
+#if DEBUG == 0
+            std::cout << " --------------------------------------------------------- ";
+#endif
+            std::cout << "clients: " << server->clients()->clients_size() << std::endl;
         }
 
         //delete(&msg);
@@ -57,8 +86,13 @@ void edvs_thread(TcpServer *server)
         // After sending delete everything
         events_buffer.clear();
 
+#if DEBUG == 0
+        // Wait for 5 ms
+        usleep(5 * 1000);
+#else
         // Wait for 1 s
-        usleep(100 * 1000);
+        usleep(1000 * 1000);
+#endif
     }
 }
 

@@ -40,7 +40,7 @@ void Message_EventCollection::unserialize(std::string const *str)
 std::string Message_EventCollection::convert_event_to_string(const Edvs::Event e)
 {
     char buffer[100];
-    snprintf(buffer, 100, "%u-%u-%u-%u-%u", e.id, e.x, e.y, e.parity, e.t);
+    snprintf(buffer, 100, "%02u-%03u-%03u-%1u-%015u", e.id, e.x, e.y, e.parity, e.t);
 
     return std::string(buffer);
 }
