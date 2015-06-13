@@ -6,14 +6,9 @@
 
 bool TcpMessage::decode_header()
 {
-    unsigned char buffer = 0;
-    body_length_ = 0;
-
-    for (int i = 0; i < header_length; i++)
-    {
-        buffer = data_[i] << (i * 8);
-        body_length_ += buffer;
-    }
+    char header[header_length + 1] = "";
+    std::strncat(header, data_, header_length);
+    body_length_ = std::atoi(header);
 
     if (body_length_ > max_body_length)
     {
@@ -26,11 +21,9 @@ bool TcpMessage::decode_header()
 
 void TcpMessage::encode_header()
 {
-    // todo
-    for (int i = 0; i < header_length; i++)
-    {
-        data_[i] = (body_length_ >> (i * 8)) & 0xFF;
-    }
+    char header[header_length + 1] = "";
+    std::sprintf(header, "%10d", static_cast<int>(body_length_));
+    std::memcpy(data_, header, header_length);
 }
 
 void TcpMessage::encode()

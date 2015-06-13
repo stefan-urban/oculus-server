@@ -12,7 +12,7 @@
 class TcpMessage
 {
 public:
-    enum { header_length = 4 };
+    enum { header_length = 10 };
     enum { max_body_length = 65536 };
 
     TcpMessage()
