@@ -23,9 +23,6 @@ void TcpClients::leave(TcpClient_ptr client)
 
 void TcpClients::deliver(TcpMessage& msg)
 {
-//    recent_msgs_.push_back(msg);
-//    while (recent_msgs_.size() > max_recent_msgs)
-//        recent_msgs_.pop_front();
 
     for (auto client: clients_)
         client->deliver(msg);

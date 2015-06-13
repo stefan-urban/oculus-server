@@ -35,33 +35,22 @@ void edvs_thread(TcpServer *server)
 
         for(const Edvs::Event& e : events) {
 
-            Edvs::Event e1;
-
-            e1.id = 2;
-            e1.x = 44;
-            e1.y = 125;
-            e1.parity = 1;
-            e1.t = 45912738;
-
-            if (events_buffer.size() < 10)
-                events_buffer.push_back(e1);
+            events_buffer.push_back(e);
         }
 
-        // Deliver all read events to connected devices
-        Message_EventCollection msg;
-        msg.set_events(events_buffer);
+        if (events_buffer.size() > 0)
+        {
+            // Deliver all read events to connected devices
+            Message_EventCollection msg;
+            msg.set_events(events_buffer);
 
-        //auto data = msg.serialize();
+            // Wrap and send
+            TcpMessage tcpMsg;
+            tcpMsg.message(&msg);
 
-        //Message_EventCollection msg2;
-        //msg2.unserialize(data);
-
-        // Wrap and send
-        TcpMessage tcpMsg;
-        tcpMsg.message(&msg);
-
-        server->clients()->deliver(tcpMsg);
-        std::cout << " --------------------------------------------------------- clients: " << server->clients()->clients_size() << std::endl;
+            server->clients()->deliver(tcpMsg);
+            std::cout << " --------------------------------------------------------- clients: " << server->clients()->clients_size() << std::endl;
+        }
 
         //delete(&msg);
 

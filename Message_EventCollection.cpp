@@ -9,14 +9,14 @@
 
 void Message_EventCollection::set_events(EdvsEventsCollection e)
 {
-    events = e;
+    events_ = e;
 }
 
 std::string Message_EventCollection::serialize()
 {
     std::string str;
 
-    for(const Edvs::Event& e : events)
+    for(const Edvs::Event& e : events_)
     {
         str.append(convert_event_to_string(e));
         str.append("|");
@@ -26,13 +26,13 @@ std::string Message_EventCollection::serialize()
 }
 
 
-void Message_EventCollection::unserialize(std::string const &str)
+void Message_EventCollection::unserialize(std::string const *str)
 {
-    std::stringstream iss(str);
+    std::stringstream iss(*str);
 
     for (std::string token; std::getline(iss, token, '|'); )
     {
-        events.push_back(convert_string_to_event(token));
+        events_.push_back(convert_string_to_event(token));
     }
 }
 

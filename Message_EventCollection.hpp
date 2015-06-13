@@ -11,12 +11,17 @@ class Message_EventCollection : public Message
 public:
     void set_events(EdvsEventsCollection e);
 
+    EdvsEventsCollection events()
+    {
+        return events_;
+    }
+
     std::string serialize();
-    void unserialize(std::string const &str);
+    void unserialize(std::string const *str);
 
 private:
 
-    EdvsEventsCollection events;
+    EdvsEventsCollection events_;
 
     std::string convert_event_to_string(Edvs::Event);
     Edvs::Event convert_string_to_event(const std::string str);
