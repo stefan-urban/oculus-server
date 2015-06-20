@@ -50,6 +50,7 @@ Edvs::Event Message_EventCollection::convert_string_to_event(std::string str)
 {
     Edvs::Event e;
     size_t pos = std::string::npos;
+    int i = 0;
 
     do
     {
@@ -61,8 +62,6 @@ Edvs::Event Message_EventCollection::convert_string_to_event(std::string str)
 
         // Cut off token from source string
         str = str.substr(pos + 1);
-
-        int i = 0;
 
         // Only do something if token is containing characters, this
         // is because two values can have more than one delimiter in
