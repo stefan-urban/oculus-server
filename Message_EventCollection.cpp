@@ -30,10 +30,19 @@ std::string Message_EventCollection::serialize()
 void Message_EventCollection::unserialize(std::string const *str)
 {
     std::stringstream iss(*str);
+    events_.clear();
 
     for (std::string token; std::getline(iss, token, '|'); )
     {
-        events_.push_back(convert_string_to_event(token));
+        Edvs::Event event = convert_string_to_event(token);
+
+        // Some error
+        if (event.id == 255)
+        {
+            continue;
+        }
+
+        events_.push_back(event);
     }
 }
 
@@ -92,6 +101,14 @@ Edvs::Event Message_EventCollection::convert_string_to_event(std::string str)
         }
     }
     while (pos != std::string::npos);
+
+    // Something went wrong!
+    if (i != 5)
+    {
+        e.id = 255;
+
+        return e;
+    }
 
     return e;
 }
