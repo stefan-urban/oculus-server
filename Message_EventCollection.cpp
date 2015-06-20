@@ -49,10 +49,17 @@ void Message_EventCollection::unserialize(std::string const *str)
 
 std::string Message_EventCollection::convert_event_to_string(const Edvs::Event e)
 {
-    char buffer[100];
-    snprintf(buffer, 100, "%02u-%03u-%03u-%1u-%015u", e.id, e.x, e.y, e.parity, e.t);
+    std::ostringstream oss;
 
-    return std::string(buffer);
+    std::string delim = "-";
+
+    oss << std::dec << (int) e.id << delim;
+    oss << std::dec << (int) e.x << delim;
+    oss << std::dec << (int) e.y << delim;
+    oss << std::dec << (int) e.parity << delim;
+    oss << e.t;
+
+    return oss.str();
 }
 
 Edvs::Event Message_EventCollection::convert_string_to_event(std::string str)
