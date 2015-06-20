@@ -1,7 +1,8 @@
 
 #include <cstdlib>
 #include <sstream>
-#include <stdint.h>
+#include <cstdint>
+#include <boost/lexical_cast.hpp>
 
 #include "Message_EventCollection.hpp"
 
@@ -45,41 +46,53 @@ std::string Message_EventCollection::convert_event_to_string(const Edvs::Event e
     return std::string(buffer);
 }
 
-Edvs::Event Message_EventCollection::convert_string_to_event(const std::string str)
+Edvs::Event Message_EventCollection::convert_string_to_event(std::string str)
 {
     Edvs::Event e;
+    size_t pos = std::string::npos;
 
-    std::istringstream ss(str);
-
-    int i = 0;
-    for (std::string token; std::getline(ss, token, '-'); )
+    do
     {
-        switch(i)
+        // Find first occurance of delimiter
+        pos = str.find("-");
+
+        // Get string from start to delimiter
+        std::string token = str.substr(0, pos);
+
+        // Cut off token from source string
+        str = str.substr(pos + 1);
+
+        int i = 0;
+
+        // Only do something if token is containing characters, this
+        // is because two values can have more than one delimiter in
+        // between them
+        if (token.size() > 0)
         {
-        case 0: // id
-            e.id = boost::lexical_cast<uint16_t>(token.c_str());
-            break;
+            switch (i)
+            {
+            case 0:
+                e.id = std::atoi(token.c_str());
+                break;
+            case 1:
+                e.x = std::atoi(token.c_str());
+                break;
+            case 2:
+                e.y = std::atoi(token.c_str());
+                break;
+            case 3:
+                e.parity = std::atoi(token.c_str());
+                break;
+            case 4:
+                std::istringstream iss(token.c_str());
+                iss >> e.t;
+                break;
+            }
 
-        case 1: // x
-            e.x = boost::lexical_cast<uint16_t>(token.c_str());
-            break;
-
-        case 2: // y
-            e.y = boost::lexical_cast<uint16_t>(token.c_str());
-            break;
-
-        case 3: // parity
-            e.parity = boost::lexical_cast<uint8_t>(token.c_str());
-            break;
-
-        case 4: // time
-            e.t = boost::lexical_cast<uint64_t>(token.c_str());;
-            break;
-
+            i++;
         }
-
-        i++;
     }
+    while (pos != std::string::npos);
 
     return e;
 }

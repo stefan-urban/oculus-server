@@ -24,7 +24,7 @@ private:
     EdvsEventsCollection events_;
 
     std::string convert_event_to_string(Edvs::Event);
-    Edvs::Event convert_string_to_event(const std::string str);
+    Edvs::Event convert_string_to_event(std::string str);
 
 };
 
