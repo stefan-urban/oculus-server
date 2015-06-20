@@ -48,31 +48,32 @@ std::string Message_EventCollection::convert_event_to_string(const Edvs::Event e
 Edvs::Event Message_EventCollection::convert_string_to_event(const std::string str)
 {
     Edvs::Event e;
-    std::stringstream iss(str);
+
+    std::istringstream ss(str);
 
     int i = 0;
-    for (std::string token; std::getline(iss, token, '-'); )
+    for (std::string token; std::getline(ss, token, '-'); )
     {
         switch(i)
         {
         case 0: // id
-            e.id = (u_int8_t) std::atoi(token.c_str());
+            e.id = boost::lexical_cast<uint16_t>(token.c_str());
             break;
 
         case 1: // x
-            e.x = (u_int16_t) std::atoi(token.c_str());
+            e.x = boost::lexical_cast<uint16_t>(token.c_str());
             break;
 
         case 2: // y
-            e.y = (u_int16_t) std::atoi(token.c_str());
+            e.y = boost::lexical_cast<uint16_t>(token.c_str());
             break;
 
         case 3: // parity
-            e.parity = (u_int8_t) std::atoi(token.c_str());
+            e.parity = boost::lexical_cast<uint8_t>(token.c_str());
             break;
 
         case 4: // time
-            e.t = (u_int64_t) std::atoi(token.c_str());
+            e.t = boost::lexical_cast<uint64_t>(token.c_str());;
             break;
 
         }
