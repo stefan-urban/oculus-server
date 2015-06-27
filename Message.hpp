@@ -6,7 +6,7 @@
 class Message
 {
 public:
-    virtual std::string get_type();
+    virtual static std::string get_type() = 0;
     virtual std::string serialize() = 0;
     virtual void unserialize(std::string const *str) = 0;
 };

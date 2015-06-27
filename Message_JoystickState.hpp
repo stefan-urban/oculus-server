@@ -28,7 +28,7 @@ public:
     }
 
 
-    std::string get_type()
+    static std::string get_type()
     {
         return std::string("joystick");
     }
