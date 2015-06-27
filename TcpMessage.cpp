@@ -28,7 +28,9 @@ void TcpMessage::encode_header()
 
 void TcpMessage::encode()
 {
-    std::string body_buffer = message_->serialize();
+    std::string body_buffer = message_->get_type();
+    body_buffer.append("|");
+    body_buffer.append(message_->serialize());
 
     // Copy it into data
     body_length_ = body_buffer.size();
