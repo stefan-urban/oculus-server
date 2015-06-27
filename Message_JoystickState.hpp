@@ -4,7 +4,7 @@
 #include <vector>
 #include "Message.hpp"
 
-class Message_JoystickState : Message
+class Message_JoystickState : public Message
 {
 public:
     Message_JoystickState()

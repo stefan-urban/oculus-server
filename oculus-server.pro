@@ -22,7 +22,8 @@ SOURCES += \
     EdvsEventsCollection.cpp \
     EdvsMessage_DebugInformation.cpp \
     Message.cpp \
-    Message_EventCollection.cpp
+    Message_EventCollection.cpp \
+    Message_JoystickState.cpp
 
 HEADERS += \
     TcpMessage.hpp \
@@ -39,5 +40,6 @@ HEADERS += \
     EdvsEventsCollection.hpp \
     EdvsMessage_DebugInformation.hpp \
     Message.hpp \
-    Message_EventCollection.hpp
+    Message_EventCollection.hpp \
+    Message_JoystickState.hpp
 
