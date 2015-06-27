@@ -1,12 +1,6 @@
 
 #include "TcpSession.hpp"
-
-TcpSession::TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& clients)
-  : socket_(std::move(socket)),
-    clients_(clients)
-{
-
-}
+#include "Message_JoystickState.hpp"
 
 void TcpSession::start()
 {
@@ -48,24 +42,38 @@ void TcpSession::do_read_header()
 
 void TcpSession::do_read_body()
 {
-  auto self(shared_from_this());
-  boost::asio::async_read(socket_,
-      boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
-      [this, self](boost::system::error_code ec, std::size_t /*length*/)
-      {
-          if (!ec)
-          {
-              // Handle message
-              read_msg_.decode();
+    auto self(shared_from_this());
+    boost::asio::async_read(socket_,
+    boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
+        [this, self](boost::system::error_code ec, std::size_t /*length*/)
+        {
+            if (!ec)
+            {
+                // Always is joystick message
+                std::string const data = std::string(read_msg_.body());
 
-              // And go back to reading the header
-              do_read_header();
-          }
-          else
-          {
-              clients_.leave(shared_from_this());
-          }
-      });
+                // Determine type
+                size_t pos = data.find('|');
+
+                if (pos == std::string::npos || pos < 2)
+                {
+                    return;
+                }
+
+                std::string type = data.substr(0, pos - 1);
+
+                // Pack new event and dispatch it
+                auto e = DispatcherEvent(type, data.substr(pos + 1));
+                dispatcher_->dispatch(e);
+
+                // And go back to reading the header
+                do_read_header();
+            }
+            else
+            {
+                clients_.leave(shared_from_this());
+            }
+        });
 }
 
 void TcpSession::do_write()

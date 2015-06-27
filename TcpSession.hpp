@@ -5,13 +5,21 @@
 
 #include "TcpClients.hpp"
 #include "TcpMessage.hpp"
+#include "Robot.hpp"
+#include "vendor/dispatcher/Dispatcher.hpp"
 
 class TcpSession
   : public TcpClient,
     public std::enable_shared_from_this<TcpSession>
 {
 public:
-    TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& room);
+    TcpSession(boost::asio::ip::tcp::socket socket, TcpClients& clients, Dispatcher *dispatcher)
+        : socket_(std::move(socket))
+        , clients_(clients)
+        , dispatcher_(dispatcher)
+    {
+    }
+
     void start();
     void deliver(TcpMessage& msg);
 private:
@@ -23,6 +31,7 @@ private:
     TcpClients& clients_;
     TcpMessage read_msg_;
     TcpMessageQueue write_msgs_;
+    Dispatcher *dispatcher_;
 };
 
 #endif // TCP_SESSION_H

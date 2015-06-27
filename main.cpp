@@ -7,16 +7,18 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
+#include "Robot.hpp"
 #include "TcpServer.hpp"
 #include "TcpMessage.hpp"
 #include "EdvsEventsCollection.hpp"
 #include "Message_EventCollection.hpp"
 #include "vendor/edvstools/Edvs/EventStream.hpp"
+#include "vendor/dispatcher/Dispatcher.hpp"
 
 
 #define DEBUG 1
 
-void edvs_thread(TcpServer *server)
+void edvs_app(TcpServer *server)
 {
     std::vector<std::string> p_vuri = {"127.0.0.1:7001 127.0.0.1:7002"};
     EdvsEventsCollection events_buffer;
@@ -96,25 +98,41 @@ void edvs_thread(TcpServer *server)
     }
 }
 
+int robot_movement_control_app(Robot *robot)
+{
+
+
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     std::cout << "oculus-server v1" << std::endl;
 
-    try
-    {
-        boost::asio::io_service io_service;
+    // Create io service
+    boost::asio::io_service io_service;
 
-        boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 4000);
-        TcpServer server(io_service, endpoint);
+    // Robot movement control
+    Robot robot;
 
-        boost::thread et(edvs_thread, &server);
+    // Setup dispatcher
+    auto dispatcher = new Dispatcher();
 
-        io_service.run();
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << "Exception: " << e.what() << "\n";
-    }
+    dispatcher->addListener(&robot);
+
+    // Setup TCP server
+    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 4000);
+
+    TcpServer server(io_service, endpoint, dispatcher);
+
+    // Start threads
+    boost::thread eda(edvs_app, &server);
+    boost::thread rca(robot_movement_control_app, &robot);
+
+    io_service.run();
+
+    eda.join();
+    rca.join();
 
     return 0;
 }
