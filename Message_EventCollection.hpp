@@ -5,6 +5,8 @@
 #include "Message.hpp"
 #include "EdvsEventsCollection.hpp"
 
+#include <string>
+
 
 class Message_EventCollection : public Message
 {
@@ -14,6 +16,11 @@ public:
     EdvsEventsCollection events()
     {
         return events_;
+    }
+
+    std::string get_type()
+    {
+        return std::string("events");
     }
 
     std::string serialize();

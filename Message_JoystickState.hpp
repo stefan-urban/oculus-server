@@ -17,6 +17,22 @@ public:
     {
     }
 
+    std::vector<bool> button_states()
+    {
+        return button_states_;
+    }
+
+    std::vector<int> axis_states()
+    {
+        return axis_states_;
+    }
+
+
+    std::string get_type()
+    {
+        return std::string("joystick");
+    }
+
     std::string serialize();
     void unserialize(std::string const *str);
 
