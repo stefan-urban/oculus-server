@@ -19,14 +19,17 @@
 
 
 
+#define DEBUG
+
 
 int global_stop = 0;
 
 
 EdvsEventsCollection events_buffer;
+boost::mutex mutex;
 
 const std::vector<std::string> uris = {
-//    std::string("127.0.0.1:7001")
+    std::string("127.0.0.1:7004")
 //    std::string("/dev/ttyUSB1?baudrate=4000000"),
 //    std::string("/dev/ttyUSB2?baudrate=4000000")
 };
@@ -54,42 +57,15 @@ void edvs_app(const std::string uri)
     }
 }
 
-void edvs_transmit_app(TcpServer *server)
+void edvs_demo_app()
 {
-    while (global_stop == 0)
-    {
-        if (events_buffer.size() > 0)
-        {
-            // Deliver all read events to connected devices
-            Message_EventCollection msg;
-            msg.set_events(events_buffer);
-
-            // Wrap and send
-            TcpMessage tcpMsg;
-            tcpMsg.message(&msg);
-
-            server->clients()->deliver(tcpMsg);
-            std::cout << "clients: " << server->clients()->clients_size() << std::endl;
-        }
-
-        // After sending delete everything
-        events_buffer.clear();
-
-        usleep(10 * 1000);
-    }
-}
-
-void edvs_demo_app(TcpServer *server)
-{
-    EdvsEventsCollection events_buffer;
-
     while (global_stop == 0)
     {
         for (int i = 0; i < 10; i++)
         {
             Edvs::Event e;
 
-            e.id = rand() % 7;
+            e.id = 0;
             e.x = rand() % 128;
             e.y = rand() % 128;
             e.parity = rand() % 2;
@@ -102,8 +78,19 @@ void edvs_demo_app(TcpServer *server)
             events_buffer.push_back(e);
         }
 
+        // Wait for 1 s
+        usleep(1000 * 1000);
+    }
+}
+
+void edvs_transmit_app(TcpServer *server)
+{
+    while (global_stop == 0)
+    {
         if (events_buffer.size() > 0)
         {
+            mutex.lock();
+
             // Deliver all read events to connected devices
             Message_EventCollection msg;
             msg.set_events(events_buffer);
@@ -114,13 +101,14 @@ void edvs_demo_app(TcpServer *server)
 
             server->clients()->deliver(tcpMsg);
             std::cout << "clients: " << server->clients()->clients_size() << std::endl;
+
+            // After sending delete everything
+            events_buffer.clear();
+
+            mutex.unlock();
         }
 
-        // After sending delete everything
-        events_buffer.clear();
-
-        // Wait for 1 s
-        usleep(1000 * 1000);
+        usleep(10 * 1000);
     }
 }
 
@@ -168,25 +156,32 @@ int main(int /*argc*/, char** /*argv[]*/)
 
 
     // Start threads
+#ifndef DEBUG
     std::vector<boost::thread*> edas;
     for (auto& uri : uris)
     {
         boost::thread eda(edvs_app, uri);
         edas.push_back(&eda);
     }
+#else
+    boost::thread eda(edvs_demo_app);
+#endif
 
-    //boost::thread eta(edvs_transmit_app, &server);
-    boost::thread eta(edvs_demo_app, &server);
+    boost::thread eta(edvs_transmit_app, &server);
     boost::thread rca(robot_movement_control_app, &robot);
 
     io_service.run();
 
 
     // Wait for all threads to finish
+#ifndef DEBUG
     for (boost::thread* eda : edas)
     {
         eda->join();
     }
+#else
+    eda.join();
+#endif
     eta.join();
     rca.join();
 
