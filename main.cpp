@@ -4,6 +4,7 @@
 #include <list>
 #include <random>
 #include <time.h>
+#include <vector>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
@@ -17,41 +18,73 @@
 #include "vendor/dispatcher/Dispatcher.hpp"
 
 
-#define DEBUG 1
 
 
 int global_stop = 0;
 
-void edvs_app(TcpServer *server)
+
+EdvsEventsCollection events_buffer;
+
+const std::vector<std::string> uris = {
+//    std::string("127.0.0.1:7001")
+//    std::string("/dev/ttyUSB1?baudrate=4000000"),
+//    std::string("/dev/ttyUSB2?baudrate=4000000")
+};
+
+void edvs_app(const std::string uri)
 {
-    std::vector<std::string> p_vuri = {"127.0.0.1:7001 127.0.0.1:7002"};
-    EdvsEventsCollection events_buffer;
+    auto stream = Edvs::OpenEventStream(uri);
 
-#if DEBUG == 0
-    auto stream = Edvs::OpenEventStream(p_vuri);
-
-    if (stream->is_open())
+    if (!stream->is_open() ||!stream->is_live())
     {
-        //std::cout << "eDVS stream open" << std::endl;
-    }
-    else
-    {
-        std::cout << "eDVS stream NOT opened" << std::endl;
+        std::cout << "Could not open stream: " << uri << std::endl;
         return;
     }
-#endif
 
     while (global_stop == 0)
     {
-#if DEBUG == 0
         auto events = stream->read();
 
         for(const Edvs::Event& e : events) {
             events_buffer.push_back(e);
         }
-#else
-        EdvsEventsCollection events;
 
+        // Wait for 5 ms
+        usleep(5 * 1000);
+    }
+}
+
+void edvs_transmit_app(TcpServer *server)
+{
+    while (global_stop == 0)
+    {
+        if (events_buffer.size() > 0)
+        {
+            // Deliver all read events to connected devices
+            Message_EventCollection msg;
+            msg.set_events(events_buffer);
+
+            // Wrap and send
+            TcpMessage tcpMsg;
+            tcpMsg.message(&msg);
+
+            server->clients()->deliver(tcpMsg);
+            std::cout << "clients: " << server->clients()->clients_size() << std::endl;
+        }
+
+        // After sending delete everything
+        events_buffer.clear();
+
+        usleep(10 * 1000);
+    }
+}
+
+void edvs_demo_app(TcpServer *server)
+{
+    EdvsEventsCollection events_buffer;
+
+    while (global_stop == 0)
+    {
         for (int i = 0; i < 10; i++)
         {
             Edvs::Event e;
@@ -68,7 +101,6 @@ void edvs_app(TcpServer *server)
 
             events_buffer.push_back(e);
         }
-#endif
 
         if (events_buffer.size() > 0)
         {
@@ -81,27 +113,15 @@ void edvs_app(TcpServer *server)
             tcpMsg.message(&msg);
 
             server->clients()->deliver(tcpMsg);
-#if DEBUG == 0
-            std::cout << " --------------------------------------------------------- ";
-#endif
             std::cout << "clients: " << server->clients()->clients_size() << std::endl;
         }
-
-        //delete(&msg);
 
         // After sending delete everything
         events_buffer.clear();
 
-#if DEBUG == 0
-        // Wait for 5 ms
-        usleep(5 * 1000);
-#else
         // Wait for 1 s
         usleep(1000 * 1000);
-#endif
     }
-
-
 }
 
 int robot_movement_control_app(Robot *robot)
@@ -111,7 +131,7 @@ int robot_movement_control_app(Robot *robot)
         // Timeout for client robot control, 500 ms
         if (robot->duration_since_last_cmd_update() > 500)
         {
-            static counter = 0;
+            static int counter = 0;
 
             robot->stop();
 
@@ -128,33 +148,46 @@ int robot_movement_control_app(Robot *robot)
     return 0;
 }
 
-int main(int argc, char* argv[])
+int main(int /*argc*/, char** /*argv[]*/)
 {
     std::cout << "oculus-server v1" << std::endl;
 
-    // Create io service
-    boost::asio::io_service io_service;
 
-    // Robot movement control
+    boost::asio::io_service io_service;
     Robot robot;
+
 
     // Setup dispatcher
     auto dispatcher = new Dispatcher();
-
     dispatcher->addListener(&robot, std::string("robotcmd"));
+
 
     // Setup TCP server
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 4000);
-
     TcpServer server(io_service, endpoint, dispatcher);
 
+
     // Start threads
-    boost::thread eda(edvs_app, &server);
+    std::vector<boost::thread*> edas;
+    for (auto& uri : uris)
+    {
+        boost::thread eda(edvs_app, uri);
+        edas.push_back(&eda);
+    }
+
+    //boost::thread eta(edvs_transmit_app, &server);
+    boost::thread eta(edvs_demo_app, &server);
     boost::thread rca(robot_movement_control_app, &robot);
 
     io_service.run();
 
-    eda.join();
+
+    // Wait for all threads to finish
+    for (boost::thread* eda : edas)
+    {
+        eda->join();
+    }
+    eta.join();
     rca.join();
 
     return 0;

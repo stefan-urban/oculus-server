@@ -64,6 +64,11 @@ void Robot::drive(float direction, float speed)
 
 void Robot::stop()
 {
+    if (fd_ < 0)
+    {
+        return;
+    }
+
     std::string command;
     command.append("!S");
 
@@ -73,6 +78,11 @@ void Robot::stop()
 
 void Robot::beep()
 {
+    if (fd_ < 0)
+    {
+        return;
+    }
+
     std::string command;
     command.append("B");
 
