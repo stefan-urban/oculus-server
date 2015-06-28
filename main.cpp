@@ -111,7 +111,14 @@ int robot_movement_control_app(Robot *robot)
         // Timeout for client robot control, 500 ms
         if (robot->duration_since_last_cmd_update() > 500)
         {
+            static counter = 0;
+
             robot->stop();
+
+            if (counter++ % 5 == 0)
+            {
+                robot->beep();
+            }
         }
 
         // Sleep 0.2 seconds

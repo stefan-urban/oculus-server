@@ -11,6 +11,7 @@ Robot::Robot()
     fd_ = edvs_serial_open(path_.c_str(), 4000000);
 
     last_cmd_update_ = std::chrono::steady_clock::now();
+    stop();
 }
 
 Robot::~Robot()
