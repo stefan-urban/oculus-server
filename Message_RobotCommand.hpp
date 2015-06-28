@@ -17,6 +17,16 @@ public:
     {
     }
 
+    float direction() const
+    {
+        return direction_;
+    }
+
+    float speed() const
+    {
+        return speed_;
+    }
+
     std::string get_type()
     {
         return std::string("robotcmd");
