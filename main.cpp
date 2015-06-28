@@ -12,11 +12,15 @@
 #include "TcpMessage.hpp"
 #include "EdvsEventsCollection.hpp"
 #include "Message_EventCollection.hpp"
+#include "Message_RobotCommand.hpp"
 #include "vendor/edvstools/Edvs/EventStream.hpp"
 #include "vendor/dispatcher/Dispatcher.hpp"
 
 
 #define DEBUG 1
+
+
+int global_stop = 0;
 
 void edvs_app(TcpServer *server)
 {
@@ -37,7 +41,7 @@ void edvs_app(TcpServer *server)
     }
 #endif
 
-    while (1)
+    while (global_stop == 0)
     {
 #if DEBUG == 0
         auto events = stream->read();
@@ -96,11 +100,23 @@ void edvs_app(TcpServer *server)
         usleep(1000 * 1000);
 #endif
     }
+
+
 }
 
 int robot_movement_control_app(Robot *robot)
 {
+    while (global_stop == 0)
+    {
+        // Timeout for client robot control, 500 ms
+        if (robot->duration_since_last_cmd_update() > 500)
+        {
+            robot->stop();
+        }
 
+        // Sleep 0.2 seconds
+        usleep(200 * 1000);
+    }
 
     return 0;
 }
@@ -118,7 +134,7 @@ int main(int argc, char* argv[])
     // Setup dispatcher
     auto dispatcher = new Dispatcher();
 
-    dispatcher->addListener(&robot);
+    dispatcher->addListener(&robot, std::string("robotcmd"));
 
     // Setup TCP server
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 4000);
