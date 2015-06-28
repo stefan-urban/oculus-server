@@ -25,7 +25,8 @@ SOURCES += \
     Message_EventCollection.cpp \
     Message_JoystickState.cpp \
     Robot.cpp \
-    vendor/dispatcher/Dispatcher.cpp
+    vendor/dispatcher/Dispatcher.cpp \
+    Message_RobotCommand.cpp
 
 HEADERS += \
     TcpMessage.hpp \
@@ -45,5 +46,6 @@ HEADERS += \
     Message_EventCollection.hpp \
     Message_JoystickState.hpp \
     Robot.hpp \
-    vendor/dispatcher/Dispatcher.hpp
+    vendor/dispatcher/Dispatcher.hpp \
+    Message_RobotCommand.hpp
 
