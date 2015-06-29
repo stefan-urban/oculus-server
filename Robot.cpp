@@ -25,11 +25,11 @@ int Robot::duration_since_last_cmd_update()
     return std::chrono::duration_cast<std::chrono::milliseconds>(t2 - last_cmd_update_).count();
 }
 
-void Robot::event(DispatcherEvent event)
+void Robot::event(DispatcherEvent* event)
 {
     Message_RobotCommand msg_robotcmd;
 
-    std::string data = event.data();
+    std::string data = event->data();
     msg_robotcmd.unserialize(&data);
 
     if (msg_robotcmd.speed() > 0.0)

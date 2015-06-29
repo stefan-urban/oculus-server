@@ -64,7 +64,7 @@ void TcpSession::do_read_body()
 
                 // Pack new event and dispatch it
                 auto e = DispatcherEvent(type, data.substr(pos + 1));
-                dispatcher_->dispatch(e);
+                dispatcher_->dispatch(&e);
 
                 // And go back to reading the header
                 do_read_header();

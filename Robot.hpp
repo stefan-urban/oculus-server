@@ -13,7 +13,7 @@ public:
     Robot();
     ~Robot();
 
-    void event(DispatcherEvent event);
+    void event(DispatcherEvent* event);
 
     void drive(float direction, float speed);
     void stop();
