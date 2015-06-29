@@ -1,6 +1,3 @@
-[submodule "vendor/edvstools"]
-	path = vendor/edvstools
-	url = https://github.com/Danvil/edvstools.git
 [submodule "vendor/dispatcher"]
 	path = vendor/dispatcher
 	url = https://github.com/stefan-urban/dispatcher.git
