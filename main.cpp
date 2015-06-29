@@ -19,7 +19,7 @@
 
 
 
-#define DEBUG
+//#define DEBUG
 
 
 int global_stop = 0;
@@ -29,12 +29,18 @@ EdvsEventsCollection events_buffer;
 boost::mutex mutex;
 
 const std::vector<std::string> uris = {
-    std::string("127.0.0.1:7004")
+    std::string("127.0.0.1:7001"),
+    std::string("127.0.0.1:7002"),
+    std::string("127.0.0.1:7003"),
+    std::string("127.0.0.1:7004"),
+    std::string("127.0.0.1:7005"),
+    std::string("127.0.0.1:7006")
+//    std::string("10.162.177.202:7006")
 //    std::string("/dev/ttyUSB1?baudrate=4000000"),
 //    std::string("/dev/ttyUSB2?baudrate=4000000")
 };
 
-void edvs_app(const std::string uri)
+void edvs_app(const std::string uri, int camera_id)
 {
     auto stream = Edvs::OpenEventStream(uri);
 
@@ -51,7 +57,9 @@ void edvs_app(const std::string uri)
         mutex.lock();
 
         for(const Edvs::Event& e : events) {
+            //std::cout << "id: " << e.id << "\t x:" << e.x << "\t y:" << e.y << std::endl;
             events_buffer.push_back(e);
+            events_buffer.back().id = camera_id;
         }
 
         mutex.unlock();
@@ -67,11 +75,11 @@ void edvs_demo_app()
     {
         mutex.lock();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1000; i++)
         {
             Edvs::Event e;
 
-            e.id = 0;
+            e.id = rand() % 7;
             e.x = rand() % 128;
             e.y = rand() % 128;
             e.parity = rand() % 2;
@@ -165,10 +173,26 @@ int main(int /*argc*/, char** /*argv[]*/)
 
     // Start threads
 #ifndef DEBUG
+    /*
+    std::string p_uris;
+
+    for (auto&uri : uris)
+    {
+        p_uris.append(uri);
+        p_uris.append(" ");
+    }
+
+    p_uris.substr(0, p_uris.size() - 1);
+
+    boost::thread eda(edvs_app, p_uris);
+    */
+
     std::vector<boost::thread*> edas;
+
+    int camera_id = 0;
     for (auto& uri : uris)
     {
-        boost::thread eda(edvs_app, uri);
+        boost::thread eda(edvs_app, uri, camera_id++);
         edas.push_back(&eda);
     }
 #else
