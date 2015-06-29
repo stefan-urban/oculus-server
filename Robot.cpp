@@ -51,13 +51,20 @@ void Robot::drive(float direction, float speed)
         return;
     }
 
+    std::cout << "drive: d:" << direction << " s:" << speed << std::endl;
+
+    int fwd = (int)(cos(direction) * speed * 70.0);
+    int swd = (int)(sin(direction) * speed * 70.0);
+
     std::string command;
 
     command.append("!D");
-    command.append(std::to_string((int) (direction * 180.0 / M_PI)));
+    command.append(std::to_string(fwd));
     command.append(",");
-    command.append(std::to_string((int) (speed * 100.0)));
-
+    command.append(std::to_string(swd));
+    command.append(",");
+    command.append("0");
+    command.append("\n");
 
     edvs_serial_write(fd_, command.c_str(), command.size());
 }
@@ -70,7 +77,8 @@ void Robot::stop()
     }
 
     std::string command;
-    command.append("!S");
+    command.append("!D0,0,0");
+    command.append("\n");
 
     edvs_serial_write(fd_, command.c_str(), command.size());
 }
@@ -85,6 +93,7 @@ void Robot::beep()
 
     std::string command;
     command.append("B");
+    command.append("\n");
 
     edvs_serial_write(fd_, command.c_str(), command.size());
 }
