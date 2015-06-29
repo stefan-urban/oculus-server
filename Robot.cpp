@@ -51,8 +51,6 @@ void Robot::drive(float direction, float speed)
         return;
     }
 
-    std::cout << "drive: d:" << direction << " s:" << speed << std::endl;
-
     int fwd = (int)(cos(direction) * speed * 70.0);
     int swd = (int)(sin(direction) * speed * 70.0);
 
