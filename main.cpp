@@ -48,9 +48,13 @@ void edvs_app(const std::string uri)
     {
         auto events = stream->read();
 
+        mutex.lock();
+
         for(const Edvs::Event& e : events) {
             events_buffer.push_back(e);
         }
+
+        mutex.unlock();
 
         // Wait for 5 ms
         usleep(5 * 1000);
@@ -61,6 +65,8 @@ void edvs_demo_app()
 {
     while (global_stop == 0)
     {
+        mutex.lock();
+
         for (int i = 0; i < 10; i++)
         {
             Edvs::Event e;
@@ -77,6 +83,8 @@ void edvs_demo_app()
 
             events_buffer.push_back(e);
         }
+
+        mutex.unlock();
 
         // Wait for 1 s
         usleep(1000 * 1000);
