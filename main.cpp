@@ -129,12 +129,11 @@ int robot_movement_control_app(Robot *robot)
         {
             static int counter = 0;
 
-            std::cout << "stop robot" << std::endl;
             robot->stop();
 
-            if (counter++ % 5 == 0)
+            if (counter++ % 25 == 0)
             {
-//                robot->beep();
+                robot->beep();
             }
         }
 
