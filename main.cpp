@@ -156,10 +156,8 @@ int main(int /*argc*/, char** /*argv[]*/)
 {
     std::cout << "oculus-server v1" << std::endl;
 
-
     boost::asio::io_service io_service;
     Robot robot;
-
 
     // Setup dispatcher
     auto dispatcher = new Dispatcher();
@@ -173,20 +171,6 @@ int main(int /*argc*/, char** /*argv[]*/)
 
     // Start threads
 #ifndef DEBUG
-    /*
-    std::string p_uris;
-
-    for (auto&uri : uris)
-    {
-        p_uris.append(uri);
-        p_uris.append(" ");
-    }
-
-    p_uris.substr(0, p_uris.size() - 1);
-
-    boost::thread eda(edvs_app, p_uris);
-    */
-
     std::vector<boost::thread*> edas;
 
     int camera_id = 0;
@@ -219,3 +203,4 @@ int main(int /*argc*/, char** /*argv[]*/)
 
     return 0;
 }
+

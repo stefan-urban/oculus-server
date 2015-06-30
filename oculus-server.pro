@@ -23,7 +23,6 @@ SOURCES += \
     EdvsMessage_DebugInformation.cpp \
     Message.cpp \
     Message_EventCollection.cpp \
-    Message_JoystickState.cpp \
     Robot.cpp \
     vendor/dispatcher/Dispatcher.cpp \
     Message_RobotCommand.cpp
@@ -44,7 +43,6 @@ HEADERS += \
     EdvsMessage_DebugInformation.hpp \
     Message.hpp \
     Message_EventCollection.hpp \
-    Message_JoystickState.hpp \
     Robot.hpp \
     vendor/dispatcher/Dispatcher.hpp \
     Message_RobotCommand.hpp
