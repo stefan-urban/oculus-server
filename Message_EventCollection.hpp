@@ -11,6 +11,8 @@
 class Message_EventCollection : public Message
 {
 public:
+    enum { type_id = 10 };
+
     void set_events(EdvsEventsCollection e);
 
     EdvsEventsCollection events()
@@ -18,13 +20,13 @@ public:
         return events_;
     }
 
-    std::string get_type()
+    unsigned char get_type()
     {
-        return std::string("events");
+        return (unsigned char) type_id;
     }
 
-    std::string serialize();
-    void unserialize(std::string const *str);
+    std::vector<unsigned char> serialize();
+    void unserialize(std::vector<unsigned char> const *str);
 
 private:
 

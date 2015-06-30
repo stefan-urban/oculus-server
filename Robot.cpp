@@ -29,8 +29,7 @@ void Robot::event(DispatcherEvent* event)
 {
     Message_RobotCommand msg_robotcmd;
 
-    std::string data = event->data();
-    msg_robotcmd.unserialize(&data);
+    msg_robotcmd.unserialize(event->data());
 
     if (msg_robotcmd.speed() > 0.0)
     {

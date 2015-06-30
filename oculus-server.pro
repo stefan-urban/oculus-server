@@ -15,7 +15,6 @@ SOURCES += \
     TcpClients.cpp \
     TcpServer.cpp \
     TcpSession.cpp \
-    TcpMessage.cpp \
     vendor/edvstools/Edvs/EventIO.cpp \
     vendor/edvstools/Edvs/EventStream.cpp \
     vendor/edvstools/Edvs/edvs.c \
@@ -28,7 +27,6 @@ SOURCES += \
     Message_RobotCommand.cpp
 
 HEADERS += \
-    TcpMessage.hpp \
     TcpSession.hpp \
     TcpClient.hpp \
     TcpServer.hpp \
