@@ -10,7 +10,6 @@
 
 #include "Robot.hpp"
 #include "TcpServer.hpp"
-#include "TcpMessage.hpp"
 #include "EdvsEventsCollection.hpp"
 #include "Message_EventCollection.hpp"
 #include "Message_RobotCommand.hpp"
@@ -111,11 +110,7 @@ void edvs_transmit_app(TcpServer *server)
             Message_EventCollection msg;
             msg.set_events(events_buffer);
 
-            // Wrap and send
-            TcpMessage tcpMsg;
-            tcpMsg.message(&msg);
-
-            server->clients()->deliver(tcpMsg);
+            server->clients()->deliver(&msg);
             std::cout << "clients: " << server->clients()->clients_size() << std::endl;
 
             // After sending delete everything
@@ -161,7 +156,7 @@ int main(int /*argc*/, char** /*argv[]*/)
 
     // Setup dispatcher
     auto dispatcher = new Dispatcher();
-    dispatcher->addListener(&robot, std::string("robotcmd"));
+    dispatcher->addListener(&robot, Message_RobotCommand::type_id);
 
 
     // Setup TCP server

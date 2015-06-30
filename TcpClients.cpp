@@ -1,15 +1,10 @@
 #include "TcpClients.hpp"
-#include "TcpMessage.hpp"
 #include "Message.hpp"
 
 void TcpClients::join(TcpClient_ptr client)
 {
     // Add client to list
     clients_.insert(client);
-
-    // Deliver all recent messages
-//    for (auto msg: recent_msgs_)
-//        client->deliver(msg);
 
     std::cout << "join: #" << client->getId() << std::endl;
 }
@@ -21,9 +16,10 @@ void TcpClients::leave(TcpClient_ptr client)
     std::cout << "quit: #" << client->getId() << std::endl;
 }
 
-void TcpClients::deliver(TcpMessage& msg)
+void TcpClients::deliver(Message *msg)
 {
-
     for (auto client: clients_)
+    {
         client->deliver(msg);
+    }
 }

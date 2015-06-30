@@ -7,6 +7,8 @@
 class Message_RobotCommand : public Message
 {
 public:
+    enum { type_id = 11 };
+
     Message_RobotCommand()
     {
     }
@@ -27,13 +29,13 @@ public:
         return speed_;
     }
 
-    std::string get_type()
+    unsigned char get_type()
     {
-        return std::string("robotcmd");
+        return (unsigned char) type_id;
     }
 
-    std::string serialize();
-    void unserialize(std::string const *str);
+    std::vector<unsigned char> serialize();
+    void unserialize(std::vector<unsigned char> const *str);
 
 private:
     float direction_ = 0.0;

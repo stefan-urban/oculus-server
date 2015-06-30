@@ -4,14 +4,15 @@
 #include <set>
 
 #include "TcpClient.hpp"
-#include "TcpMessage.hpp"
+
 
 class TcpClients
 {
 public:
     void join(TcpClient_ptr participant);
     void leave(TcpClient_ptr participant);
-    void deliver(TcpMessage& msg);
+    void deliver(Message *msg);
+
     std::size_t clients_size()
     {
         return clients_.size();
@@ -20,7 +21,6 @@ public:
 private:
     std::set<TcpClient_ptr> clients_;
     enum { max_recent_msgs = 100 };
-    TcpMessageQueue recent_msgs_;
 };
 
 

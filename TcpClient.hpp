@@ -1,10 +1,9 @@
 #ifndef TCP_CLIENT_H
 #define TCP_CLIENT_H
 
+#include "Message.hpp"
+
 #include <boost/shared_ptr.hpp>
-
-#include "TcpMessage.hpp"
-
 
 static int next_id = 0;
 
@@ -23,7 +22,7 @@ public:
     }
 
     virtual ~TcpClient() {}
-    virtual void deliver(TcpMessage& msg) = 0;
+    virtual void deliver(Message *msg) = 0;
 private:
 };
 

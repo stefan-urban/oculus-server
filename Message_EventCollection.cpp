@@ -13,7 +13,7 @@ void Message_EventCollection::set_events(EdvsEventsCollection e)
     events_ = e;
 }
 
-std::string Message_EventCollection::serialize()
+std::vector<unsigned char> Message_EventCollection::serialize()
 {
     std::string str;
 
@@ -23,13 +23,15 @@ std::string Message_EventCollection::serialize()
         str.append("|");
     }
 
-    return str;
+    return std::vector<unsigned char>(str.begin(), str.end());
 }
 
 
-void Message_EventCollection::unserialize(std::string const *str)
+void Message_EventCollection::unserialize(std::vector<unsigned char> const *data)
 {
-    std::stringstream iss(*str);
+    auto str = std::string(data->begin(), data->end());
+
+    std::stringstream iss(str);
     events_.clear();
 
     for (std::string token; std::getline(iss, token, '|'); )
