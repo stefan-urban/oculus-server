@@ -28,12 +28,18 @@ EdvsEventsCollection events_buffer;
 boost::mutex mutex;
 
 const std::vector<std::string> uris = {
-    std::string("127.0.0.1:7001"),
-    std::string("127.0.0.1:7002"),
-    std::string("127.0.0.1:7003"),
-    std::string("127.0.0.1:7004"),
-    std::string("127.0.0.1:7005"),
-    std::string("127.0.0.1:7006")
+    std::string("10.162.177.202:7002"),
+    std::string("10.162.177.202:7003"),
+    std::string("10.162.177.202:7004"),
+    std::string("10.162.177.202:7005"),
+    std::string("10.162.177.202:7006"),
+    std::string("10.162.177.202:7007"),
+//    std::string("127.0.0.1:7001"),
+//    std::string("127.0.0.1:7002"),
+//    std::string("127.0.0.1:7003"),
+//    std::string("127.0.0.1:7004"),
+//    std::string("127.0.0.1:7005"),
+//    std::string("127.0.0.1:7006")
 //    std::string("10.162.177.202:7006")
 //    std::string("/dev/ttyUSB1?baudrate=4000000"),
 //    std::string("/dev/ttyUSB2?baudrate=4000000")
@@ -56,6 +62,7 @@ void edvs_app(const std::string uri, int camera_id)
         mutex.lock();
 
         for(const Edvs::Event& e : events) {
+
             //std::cout << "id: " << e.id << "\t x:" << e.x << "\t y:" << e.y << std::endl;
             events_buffer.push_back(e);
             events_buffer.back().id = camera_id;
@@ -64,7 +71,7 @@ void edvs_app(const std::string uri, int camera_id)
         mutex.unlock();
 
         // Wait for 5 ms
-        usleep(5 * 1000);
+        usleep(200 * 1000);
     }
 }
 
@@ -111,7 +118,7 @@ void edvs_transmit_app(TcpServer *server)
             msg.set_events(events_buffer);
 
             server->clients()->deliver(&msg);
-            std::cout << "clients: " << server->clients()->clients_size() << std::endl;
+            //std::cout << "clients: " << server->clients()->clients_size() << std::endl;
 
             // After sending delete everything
             events_buffer.clear();

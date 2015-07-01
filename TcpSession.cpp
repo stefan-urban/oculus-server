@@ -37,12 +37,12 @@ void TcpSession::deliver(Message *msg)
 void TcpSession::do_read_header()
 {
     auto self(shared_from_this());
-    boost::asio::async_read(socket_, boost::asio::buffer(read_header_),
+    boost::asio::async_read(socket_, boost::asio::buffer(read_header_, read_header_.size()),
         [this, self](boost::system::error_code ec, std::size_t /*length*/)
         {
-            if (!ec)
+            if (!ec || read_header_.size() != header_length)
             {
-                unsigned long body_size;
+                unsigned long body_size = 0;
 
                 for (size_t i = 0; i < header_length; i++)
                 {
@@ -56,6 +56,7 @@ void TcpSession::do_read_header()
             }
             else
             {
+                std::cout << "client read header error" << std::endl;
                 clients_.leave(shared_from_this());
             }
         });
@@ -64,7 +65,7 @@ void TcpSession::do_read_header()
 void TcpSession::do_read_body()
 {
     auto self(shared_from_this());
-    boost::asio::async_read(socket_, boost::asio::buffer(read_body_),
+    boost::asio::async_read(socket_, boost::asio::buffer(read_body_, read_body_.size()),
         [this, self](boost::system::error_code ec, std::size_t /*length*/)
         {
             if (!ec)
@@ -84,6 +85,7 @@ void TcpSession::do_read_body()
             }
             else
             {
+                std::cout << "client read body error" << std::endl;
                 clients_.leave(shared_from_this());
             }
         });
@@ -108,6 +110,7 @@ void TcpSession::do_write()
             }
             else
             {
+                std::cout << "write error" << std::endl;
                 clients_.leave(shared_from_this());
             }
         });
