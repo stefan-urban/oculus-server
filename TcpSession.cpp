@@ -9,12 +9,22 @@ void TcpSession::start()
 
 void TcpSession::deliver(Message *msg)
 {
+    // Insert type
     unsigned char type = msg->get_type();
     std::vector<unsigned char> data = msg->serialize();
 
     data.insert(data.begin(), type);
 
 
+    // Insert message length
+    unsigned long body_size = data.size();
+
+    for (size_t i = 0; i < TcpSession::header_length; i++)
+    {
+        data.insert(data.begin(), (body_size >> (i*8)) & 0xFF);
+    }
+
+    // Send message
     bool write_in_progress = !write_buffer_.empty();
     write_buffer_.push_back(data);
 
