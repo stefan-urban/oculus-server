@@ -13,6 +13,7 @@
 #include "EdvsEventsCollection.hpp"
 #include "Message_EventCollection.hpp"
 #include "Message_RobotCommand.hpp"
+#include "Message_RobotBeepCommand.hpp"
 #include "vendor/edvstools/Edvs/EventStream.hpp"
 #include "vendor/dispatcher/Dispatcher.hpp"
 
@@ -164,6 +165,7 @@ int main(int /*argc*/, char** /*argv[]*/)
     // Setup dispatcher
     auto dispatcher = new Dispatcher();
     dispatcher->addListener(&robot, Message_RobotCommand::type_id);
+    dispatcher->addListener(&robot, Message_RobotBeepCommand::type_id);
 
 
     // Setup TCP server

@@ -100,7 +100,5 @@ void Robot::beep()
     command.append("B");
     command.append("\n");
 
-    std::cout << "Beep!" << std::endl;
-
     edvs_serial_write(fd_, command.c_str(), command.size());
 }
