@@ -15,109 +15,75 @@ void Message_EventCollection::set_events(EdvsEventsCollection e)
 
 std::vector<unsigned char> Message_EventCollection::serialize()
 {
-    std::string str;
+    std::vector<unsigned char> data;
 
-    for(const Edvs::Event& e : events_)
+    // First timestamp will be stored at the first 4 byte
+    u_int64_t first_timestamp = events_.front().t;
+
+    data.push_back((first_timestamp >> (3 * 8)) & 0xFF);
+    data.push_back((first_timestamp >> (2 * 8)) & 0xFF);
+    data.push_back((first_timestamp >> (1 * 8)) & 0xFF);
+    data.push_back((first_timestamp >> (0 * 8)) & 0xFF);
+
+
+    // Now store events with only a relative timediff
+    for (auto it = events_.begin(); it != events_.end(); ++it)
     {
-        str.append(convert_event_to_string(e));
-        str.append("|");
+        u_int16_t diff = (u_int16_t) (it->t - first_timestamp);
+
+        data.push_back((unsigned char) ((it->id << 1) | (it->parity & 0x01)));
+        data.push_back((unsigned char) it->x);
+        data.push_back((unsigned char) it->y);
+        data.push_back((unsigned char) ((diff >> 8) & 0xFF));
+        data.push_back((unsigned char) (diff & 0xFF));
     }
 
-    return std::vector<unsigned char>(str.begin(), str.end());
+    return data;
 }
 
 
 void Message_EventCollection::unserialize(std::vector<unsigned char> const *data)
 {
-    auto str = std::string(data->begin(), data->end());
-
-    std::stringstream iss(str);
-    events_.clear();
-
-    for (std::string token; std::getline(iss, token, '|'); )
+    if (data->size() < 4)
     {
-        Edvs::Event event = convert_string_to_event(token);
-
-        // Some error
-        if (event.id == 255)
-        {
-            continue;
-        }
-
-        events_.push_back(event);
-    }
-}
-
-
-std::string Message_EventCollection::convert_event_to_string(const Edvs::Event e)
-{
-    std::ostringstream oss;
-
-    std::string delim = "-";
-
-    oss << std::dec << (int) e.id << delim;
-    oss << std::dec << (int) e.x << delim;
-    oss << std::dec << (int) e.y << delim;
-    oss << std::dec << (int) e.parity << delim;
-    oss << e.t;
-
-    return oss.str();
-}
-
-Edvs::Event Message_EventCollection::convert_string_to_event(std::string str)
-{
-    Edvs::Event e;
-    size_t pos = std::string::npos;
-    int i = 0;
-
-    do
-    {
-        // Find first occurance of delimiter
-        pos = str.find("-");
-
-        // Get string from start to delimiter
-        std::string token = str.substr(0, pos);
-
-        // Cut off token from source string
-        str = str.substr(pos + 1);
-
-        // Only do something if token is containing characters, this
-        // is because two values can have more than one delimiter in
-        // between them
-        if (token.size() > 0)
-        {
-            switch (i)
-            {
-            case 0:
-                e.id = std::atoi(token.c_str());
-                break;
-            case 1:
-                e.x = std::atoi(token.c_str());
-                break;
-            case 2:
-                e.y = std::atoi(token.c_str());
-                break;
-            case 3:
-                e.parity = std::atoi(token.c_str());
-                break;
-            case 4:
-                std::istringstream iss(token.c_str());
-                iss >> e.t;
-                break;
-            }
-
-            i++;
-        }
-    }
-    while (pos != std::string::npos);
-
-    // Something went wrong!
-    if (i != 5)
-    {
-        e.id = 255;
-
-        return e;
+        return;
     }
 
-    return e;
+    // First four bytes are timestamp
+    u_int64_t first_timestamp = 0;
+
+    for (size_t i = 0; i < 4; i--)
+    {
+        first_timestamp |= data->at(i) << ((3 - i) * 8);
+    }
+
+    // Now do all others
+    if ((data->size() - 4) % 5)
+    {
+        // Somethings wrong
+        return;
+    }
+
+    for (size_t i = 4; i < data->size() - 4; i += 5)
+    {
+        Edvs::Event e;
+
+        // First byte is id and parity
+        e.id = (data->at(i) >> 1) & 0x7F;
+        e.parity = data->at(i) & 0x01;
+
+        // Second and third byte are coordinates
+        e.x = data->at(i + 1);
+        e.y = data->at(i + 2);
+
+        // Fourth and fifth byte are difference to first timestamp
+        u_int16_t diff = 0;
+        diff |= data->at(i + 3) << 8;
+        diff |= data->at(i + 4);
+
+        e.t = first_timestamp + (u_int64_t) diff;
+
+        // And finally add event
+        events_.push_back(e);
+    }
 }
