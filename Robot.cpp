@@ -1,5 +1,6 @@
 #include "Robot.hpp"
 #include "Message_RobotCommand.hpp"
+#include "Message_RobotBeepCommand.hpp"
 #include "vendor/edvstools/Edvs/edvs_impl.h"
 
 #include <string>
@@ -27,20 +28,27 @@ int Robot::duration_since_last_cmd_update()
 
 void Robot::event(DispatcherEvent* event)
 {
-    Message_RobotCommand msg_robotcmd;
-
-    msg_robotcmd.unserialize(event->data());
-
-    if (msg_robotcmd.speed() > 0.0)
+    if (event->type() == Message_RobotCommand::type_id)
     {
-        drive(msg_robotcmd.direction(), msg_robotcmd.speed());
-    }
-    else
-    {
-        stop();
-    }
+        Message_RobotCommand msg_robotcmd;
 
-    last_cmd_update_ = std::chrono::steady_clock::now();
+        msg_robotcmd.unserialize(event->data());
+
+        if (msg_robotcmd.speed() > 0.0)
+        {
+            drive(msg_robotcmd.direction(), msg_robotcmd.speed());
+        }
+        else
+        {
+            stop();
+        }
+
+        last_cmd_update_ = std::chrono::steady_clock::now();
+    }
+    else if (event->type() == Message_RobotBeepCommand::type_id)
+    {
+        beep();
+    }
 }
 
 void Robot::drive(float direction, float speed)
@@ -91,6 +99,8 @@ void Robot::beep()
     std::string command;
     command.append("B");
     command.append("\n");
+
+    std::cout << "Beep!" << std::endl;
 
     edvs_serial_write(fd_, command.c_str(), command.size());
 }
