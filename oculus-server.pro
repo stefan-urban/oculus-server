@@ -25,7 +25,8 @@ SOURCES += \
     Robot.cpp \
     vendor/dispatcher/Dispatcher.cpp \
     Message_RobotCommand.cpp \
-    Message_RobotBeepCommand.cpp
+    Message_RobotBeepCommand.cpp \
+    SerialCommunication.cpp
 
 HEADERS += \
     TcpSession.hpp \
@@ -45,5 +46,6 @@ HEADERS += \
     Robot.hpp \
     vendor/dispatcher/Dispatcher.hpp \
     Message_RobotCommand.hpp \
-    Message_RobotBeepCommand.hpp
+    Message_RobotBeepCommand.hpp \
+    SerialCommunication.hpp
 

@@ -6,14 +6,14 @@ void TcpClients::join(TcpClient_ptr client)
     // Add client to list
     clients_.insert(client);
 
-    std::cout << "join: #" << client->getId() << std::endl;
+    std::cout << "Client joined: #" << client->getId() << std::endl;
 }
 
 void TcpClients::leave(TcpClient_ptr client)
 {
     clients_.erase(client);
 
-    std::cout << "quit: #" << client->getId() << std::endl;
+    std::cout << "Client quit: #" << client->getId() << std::endl;
 }
 
 void TcpClients::deliver(Message *msg)
