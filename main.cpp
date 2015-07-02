@@ -112,7 +112,7 @@ void edvs_app(const std::string uri, int camera_id)
             mutex.unlock();
         }
 
-        usleep(100 * 1000);
+        usleep(30 * 1000);
     }
 }
 
@@ -172,8 +172,8 @@ void edvs_transmit_app(TcpServer *server)
             mutex.unlock();
         }
 
-        usleep(10 * 1000);
-        time += 10;
+        usleep(30 * 1000);
+        time += 30;
 
         if (time >= 1000)
         {
