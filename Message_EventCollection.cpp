@@ -52,7 +52,7 @@ void Message_EventCollection::unserialize(std::vector<unsigned char> const *data
     // First four bytes are timestamp
     u_int64_t first_timestamp = 0;
 
-    for (size_t i = 0; i < 4; i--)
+    for (size_t i = 0; i < 4; i++)
     {
         first_timestamp |= data->at(i) << ((3 - i) * 8);
     }
