@@ -31,12 +31,13 @@ EdvsEventsCollection events_buffer;
 boost::mutex mutex;
 
 const std::vector<std::string> uris = {
-    std::string("/dev/edvs_camera_debug_7002"),
-    std::string("/dev/edvs_camera_debug_7003"),
-    std::string("/dev/edvs_camera_debug_7004"),
-    std::string("/dev/edvs_camera_debug_7005"),
-    std::string("/dev/edvs_camera_debug_7006"),
-    std::string("/dev/edvs_camera_debug_7007"),
+    std::string("/dev/ttyUSB0"),
+    std::string("/dev/ttyUSB1"),
+    std::string("/dev/ttyUSB2"),
+    std::string("/dev/ttyUSB3"),
+    std::string("/dev/ttyUSB4"),
+    std::string("/dev/ttyUSB5"),
+    std::string("/dev/ttyUSB6"),
 //    std::string("10.162.177.202:7002"),
 //    std::string("10.162.177.202:7003"),
 //    std::string("10.162.177.202:7004"),
@@ -96,6 +97,11 @@ void edvs_app(const std::string uri, int camera_id)
                 continue;
             }
 
+            if (events_buffer.size() > 500)
+            {
+                continue;
+            }
+
             // Create event
             Edvs::Event event;
 
@@ -105,7 +111,7 @@ void edvs_app(const std::string uri, int camera_id)
             event.parity = (buffer[1] & 0x80) ? 1 : 0;
 
             auto duration = std::chrono::steady_clock::now() - start;
-            event.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+            event.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() + 1000000000LL;
 
             mutex.lock();
             events_buffer.push_back(event);
@@ -166,6 +172,10 @@ void edvs_transmit_app(TcpServer *server)
             // Count events
             number_of_events += events_buffer.size();
 
+            // Send time diff between first and last
+//            std::cout << "time diff : " << std::to_string(msg.events().back().t - msg.events().front().t) << std::endl;
+//            std::cout << "send: " << std::to_string(msg.events().back().t) << std::endl;
+
             // After sending delete everything
             events_buffer.clear();
 
@@ -196,7 +206,7 @@ int robot_movement_control_app(Robot *robot)
 
             robot->stop();
 
-            if (counter++ % 25 == 0)
+            if (counter++ % 50 == 0)
             {
                 robot->beep();
             }
