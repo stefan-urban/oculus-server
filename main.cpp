@@ -124,11 +124,13 @@ void edvs_app(const std::string uri, int camera_id)
 
 void edvs_demo_app()
 {
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
     while (global_stop == 0)
     {
         mutex.lock();
 
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 1; i++)
         {
             Edvs::Event e;
 
@@ -138,9 +140,10 @@ void edvs_demo_app()
             e.parity = rand() % 2;
 
             // Contious timestamp in us (no clear time reference)
-            struct timespec t;
-            clock_gettime(CLOCK_MONOTONIC, &t);
-            e.t = 1000000ull*(uint64_t)(t.tv_sec) + (uint64_t)(t.tv_nsec)/1000ull;
+            auto duration = std::chrono::steady_clock::now() - start;
+            e.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() + 100000000LL;
+
+            std::cout << "time: " << e.t << std::endl;
 
             events_buffer.push_back(e);
         }
@@ -148,7 +151,7 @@ void edvs_demo_app()
         mutex.unlock();
 
         // Wait for 1 s
-        usleep(1000 * 1000);
+        usleep(400 * 1000);
     }
 }
 
