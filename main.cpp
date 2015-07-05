@@ -11,8 +11,7 @@
 
 #include "Robot.hpp"
 #include "TcpServer.hpp"
-#include "EdvsEventsCollection.hpp"
-#include "Message_EventCollection.hpp"
+#include "Message_EventCollection2.hpp"
 #include "Message_RobotCommand.hpp"
 #include "Message_RobotBeepCommand.hpp"
 #include "SerialCommunication.hpp"
@@ -27,7 +26,7 @@
 int global_stop = 0;
 
 
-EdvsEventsCollection events_buffer;
+std::vector<message_edvs_event_t> events_buffer;
 boost::mutex mutex;
 
 const std::vector<std::string> uris = {
@@ -74,7 +73,7 @@ void edvs_app(const std::string uri, int camera_id)
         return;
     }
 
-    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+    //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
     while (global_stop == 0)
     {
@@ -103,15 +102,15 @@ void edvs_app(const std::string uri, int camera_id)
             }
 
             // Create event
-            Edvs::Event event;
+            message_edvs_event_t event;
 
             event.id = camera_id;
             event.x = buffer[0] & 0x7F;
             event.y = buffer[1] & 0x7F;
             event.parity = (buffer[1] & 0x80) ? 1 : 0;
 
-            auto duration = std::chrono::steady_clock::now() - start;
-            event.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() + 1000000000LL;
+            //auto duration = std::chrono::steady_clock::now() - start;
+            //event.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() + 1000000000LL;
 
             mutex.lock();
             events_buffer.push_back(event);
@@ -132,7 +131,7 @@ void edvs_demo_app()
 
         for (int i = 0; i < 1; i++)
         {
-            Edvs::Event e;
+            message_edvs_event_t e;
 
             e.id = rand() % 7;
             e.x = rand() % 128;
@@ -140,10 +139,10 @@ void edvs_demo_app()
             e.parity = rand() % 2;
 
             // Contious timestamp in us (no clear time reference)
-            auto duration = std::chrono::steady_clock::now() - start;
-            e.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() + 100000000LL;
+            //auto duration = std::chrono::steady_clock::now() - start;
+            //e.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() + 100000000LL;
 
-            std::cout << "time: " << e.t << std::endl;
+            //std::cout << "time: " << e.t << std::endl;
 
             events_buffer.push_back(e);
         }
@@ -167,7 +166,7 @@ void edvs_transmit_app(TcpServer *server)
             mutex.lock();
 
             // Deliver all read events to connected devices
-            Message_EventCollection msg;
+            Message_EventCollection2 msg;
             msg.set_events(events_buffer);
 
             server->clients()->deliver(&msg);

@@ -8,7 +8,6 @@
 #include "Message_EventCollection2.hpp"
 
 
-
 std::vector<unsigned char> Message_EventCollection2::serialize()
 {
     std::vector<unsigned char> data;

@@ -18,6 +18,11 @@ class Message_EventCollection2 : public Message
 public:
     enum { type_id = 10 };
 
+    void set_events(std::vector<message_edvs_event_t> events)
+    {
+        events_ = events;
+    }
+
     std::vector<message_edvs_event_t> events()
     {
         return events_;

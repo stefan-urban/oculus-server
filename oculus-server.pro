@@ -18,9 +18,7 @@ SOURCES += \
     vendor/edvstools/Edvs/EventIO.cpp \
     vendor/edvstools/Edvs/EventStream.cpp \
     vendor/edvstools/Edvs/edvs.c \
-    EdvsEventsCollection.cpp \
     Message.cpp \
-    Message_EventCollection.cpp \
     Robot.cpp \
     vendor/dispatcher/Dispatcher.cpp \
     Message_RobotCommand.cpp \
@@ -39,9 +37,7 @@ HEADERS += \
     vendor/edvstools/Edvs/Event.hpp \
     vendor/edvstools/Edvs/EventIO.hpp \
     vendor/edvstools/Edvs/EventStream.hpp \
-    EdvsEventsCollection.hpp \
     Message.hpp \
-    Message_EventCollection.hpp \
     Robot.hpp \
     vendor/dispatcher/Dispatcher.hpp \
     Message_RobotCommand.hpp \
