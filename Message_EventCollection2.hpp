@@ -6,12 +6,21 @@
 #include <string>
 #include <stdint.h>
 
+
+#if 1
+typedef struct __attribute__((packed)) {
+    unsigned int x      : 8;
+    unsigned int y      : 8;
+    unsigned int parity : 1;
+    unsigned int id     : 7;
+} message_edvs_event_t;
+#else
 typedef struct {
     u_int8_t x, y;
     u_int8_t parity;
     u_int8_t id;
 } message_edvs_event_t;
-
+#endif
 
 class Message_EventCollection2 : public Message
 {
