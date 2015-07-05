@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 typedef struct {
-    u_int16_t x, y;
+    u_int8_t x, y;
     u_int8_t parity;
     u_int8_t id;
 } message_edvs_event_t;
