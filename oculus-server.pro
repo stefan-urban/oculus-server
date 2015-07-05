@@ -19,7 +19,6 @@ SOURCES += \
     vendor/edvstools/Edvs/EventStream.cpp \
     vendor/edvstools/Edvs/edvs.c \
     EdvsEventsCollection.cpp \
-    EdvsMessage_DebugInformation.cpp \
     Message.cpp \
     Message_EventCollection.cpp \
     Robot.cpp \
@@ -40,7 +39,6 @@ HEADERS += \
     vendor/edvstools/Edvs/EventIO.hpp \
     vendor/edvstools/Edvs/EventStream.hpp \
     EdvsEventsCollection.hpp \
-    EdvsMessage_DebugInformation.hpp \
     Message.hpp \
     Message_EventCollection.hpp \
     Robot.hpp \
