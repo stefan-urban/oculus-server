@@ -1,1 +1,6 @@
+# QtCreator config file
 *.pro.user
+
+# Doxygen output
+docs/*
+!docs/config
