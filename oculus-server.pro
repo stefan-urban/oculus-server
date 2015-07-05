@@ -25,7 +25,8 @@ SOURCES += \
     vendor/dispatcher/Dispatcher.cpp \
     Message_RobotCommand.cpp \
     Message_RobotBeepCommand.cpp \
-    SerialCommunication.cpp
+    SerialCommunication.cpp \
+    Message_EventWithoutTimestampCollection.cpp
 
 HEADERS += \
     TcpSession.hpp \
@@ -45,5 +46,6 @@ HEADERS += \
     vendor/dispatcher/Dispatcher.hpp \
     Message_RobotCommand.hpp \
     Message_RobotBeepCommand.hpp \
-    SerialCommunication.hpp
+    SerialCommunication.hpp \
+    Message_EventWithoutTimestampCollection.hpp
 
