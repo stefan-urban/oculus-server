@@ -30,25 +30,35 @@ std::vector<message_edvs_event_t> events_buffer;
 boost::mutex mutex;
 
 const std::vector<std::string> uris = {
-    std::string("/dev/ttyUSB0"),
-    std::string("/dev/ttyUSB1"),
-    std::string("/dev/ttyUSB2"),
-    std::string("/dev/ttyUSB3"),
-    std::string("/dev/ttyUSB4"),
-    std::string("/dev/ttyUSB5"),
-    std::string("/dev/ttyUSB6"),
+//    std::string("/dev/ttyUSB0"),
+//    std::string("/dev/ttyUSB1"),
+//    std::string("/dev/ttyUSB2"),
+//    std::string("/dev/ttyUSB3"),
+//    std::string("/dev/ttyUSB4"),
+//    std::string("/dev/ttyUSB5"),
+//    std::string("/dev/ttyUSB6"),
+
 //    std::string("10.162.177.202:7002"),
 //    std::string("10.162.177.202:7003"),
 //    std::string("10.162.177.202:7004"),
 //    std::string("10.162.177.202:7005"),
 //    std::string("10.162.177.202:7006"),
 //    std::string("10.162.177.202:7007"),
-//    std::string("127.0.0.1:7001"),
+
+    std::string("/dev/edvs_camera_debug_7001"),
+    std::string("/dev/edvs_camera_debug_7002"),
+    std::string("/dev/edvs_camera_debug_7003"),
+    std::string("/dev/edvs_camera_debug_7004"),
+    std::string("/dev/edvs_camera_debug_7005"),
+    std::string("/dev/edvs_camera_debug_7006"),
+
 //    std::string("127.0.0.1:7002"),
 //    std::string("127.0.0.1:7003"),
 //    std::string("127.0.0.1:7004"),
 //    std::string("127.0.0.1:7005"),
-//    std::string("127.0.0.1:7006")
+//    std::string("127.0.0.1:7006"),
+//    std::string("127.0.0.1:7007"),
+
 //    std::string("10.162.177.202:7006")
 //    std::string("/dev/ttyUSB1?baudrate=4000000"),
 //    std::string("/dev/ttyUSB2?baudrate=4000000")
@@ -66,8 +76,18 @@ void edvs_app(const std::string uri, int camera_id)
 
     std::cout << "connected to " << uri << std::endl;
 
+    // Clear out buffer
+    std::string cmd = "??\n";
+
+    port.write(cmd.c_str(), 3);
+    usleep(10 * 1000);
+
+    port.write(cmd.c_str(), 3);
+    usleep(10 * 1000);
+
     // Send start command
-    if (port.write("E+\n", 3) == -1)
+    cmd = "E+\n";
+    if (port.write(cmd.c_str(), 3) == -1)
     {
         std::cout << "starting command failed" << std::endl;
         return;
@@ -123,7 +143,7 @@ void edvs_app(const std::string uri, int camera_id)
 
 void edvs_demo_app()
 {
-    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+    //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
     while (global_stop == 0)
     {

@@ -20,7 +20,7 @@ public:
 
     bool open(std::string port);
     ssize_t read(char *buffer, ssize_t n);
-    ssize_t write(char *buffer, ssize_t n);
+    ssize_t write(const char *buffer, ssize_t n);
 
     bool close();
 

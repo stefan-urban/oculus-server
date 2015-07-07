@@ -27,7 +27,7 @@ ssize_t SerialCommunication::read(char *buffer, ssize_t n)
     return ::read(fd_, (void*) buffer, n);
 }
 
-ssize_t SerialCommunication::write(char *buffer, ssize_t n)
+ssize_t SerialCommunication::write(const char *buffer, ssize_t n)
 {
     return ::write(fd_, (void*) buffer, n);
 }
