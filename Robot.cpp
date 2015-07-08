@@ -9,15 +9,16 @@
 
 Robot::Robot()
 {
-    fd_ = edvs_serial_open(path_.c_str(), 4000000);
+    port_.open(path_);
+    stop();
 
     last_cmd_update_ = std::chrono::steady_clock::now();
-    stop();
 }
 
 Robot::~Robot()
 {
-    edvs_serial_close(fd_);
+    stop();
+    port_.close();
 }
 
 int Robot::duration_since_last_cmd_update()
@@ -53,11 +54,6 @@ void Robot::event(DispatcherEvent* event)
 
 void Robot::drive(int fwd, int swd, int ang)
 {
-    if (fd_ < 0)
-    {
-        return;
-    }
-
     std::string command;
 
     command.append("!D");
@@ -68,34 +64,27 @@ void Robot::drive(int fwd, int swd, int ang)
     command.append(std::to_string(ang));
     command.append("\n");
 
-    edvs_serial_write(fd_, command.c_str(), command.size());
+    port_.write(command.c_str(), command.size());
+    //edvs_serial_write(fd_, command.c_str(), command.size());
 }
 
 void Robot::stop()
 {
-    if (fd_ < 0)
-    {
-        return;
-    }
-
     std::string command;
     command.append("!D0,0,0");
     command.append("\n");
 
-    edvs_serial_write(fd_, command.c_str(), command.size());
+    port_.write(command.c_str(), command.size());
+    //edvs_serial_write(fd_, command.c_str(), command.size());
 }
 
 
 void Robot::beep()
 {
-    if (fd_ < 0)
-    {
-        return;
-    }
-
     std::string command;
     command.append("B");
     command.append("\n");
 
-    edvs_serial_write(fd_, command.c_str(), command.size());
+    port_.write(command.c_str(), command.size());
+    //edvs_serial_write(fd_, command.c_str(), command.size());
 }

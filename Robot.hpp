@@ -4,6 +4,7 @@
 #include <chrono>
 #include <vector>
 
+#include "SerialCommunication.hpp"
 #include "vendor/dispatcher/Dispatcher.hpp"
 
 
@@ -23,7 +24,7 @@ public:
 
 private:
     const std::string path_ = std::string("/dev/ttyUSB0");
-    int fd_ = -1;
+    SerialCommunication port_;
 
     std::chrono::steady_clock::time_point last_cmd_update_;
 };
