@@ -15,7 +15,7 @@ public:
 
     void event(DispatcherEvent* event);
 
-    void drive(float direction, float speed);
+    void drive(int fwd, int swd, int ang);
     void stop();
     void beep();
 

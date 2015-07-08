@@ -34,9 +34,9 @@ void Robot::event(DispatcherEvent* event)
 
         msg_robotcmd.unserialize(event->data());
 
-        if (msg_robotcmd.speed() > 0.0)
+        if (std::abs(msg_robotcmd.x_speed()) > 0 || std::abs(msg_robotcmd.y_speed()) > 0)
         {
-            drive(msg_robotcmd.direction(), msg_robotcmd.speed());
+            drive(msg_robotcmd.x_speed(), msg_robotcmd.y_speed(), msg_robotcmd.angular_speed());
         }
         else
         {
@@ -51,15 +51,12 @@ void Robot::event(DispatcherEvent* event)
     }
 }
 
-void Robot::drive(float direction, float speed)
+void Robot::drive(int fwd, int swd, int ang)
 {
     if (fd_ < 0)
     {
         return;
     }
-
-    int fwd = (int)(cos(direction) * speed * 70.0);
-    int swd = (int)(sin(direction) * speed * 70.0);
 
     std::string command;
 
@@ -68,7 +65,7 @@ void Robot::drive(float direction, float speed)
     command.append(",");
     command.append(std::to_string(swd));
     command.append(",");
-    command.append("0");
+    command.append(std::to_string(ang));
     command.append("\n");
 
     edvs_serial_write(fd_, command.c_str(), command.size());

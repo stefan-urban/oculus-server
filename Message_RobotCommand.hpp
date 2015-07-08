@@ -13,20 +13,29 @@ public:
     {
     }
 
-    Message_RobotCommand(float direction, float speed)
-        : direction_(direction)
-        , speed_(speed)
+    /**
+     * Parameters from -70 to 70
+     */
+    Message_RobotCommand(int x_speed, int y_speed, int angular_speed)
+        : x_speed_(x_speed)
+        , y_speed_(y_speed)
+        , angular_speed_(angular_speed)
     {
     }
 
-    float direction() const
+    int x_speed() const
     {
-        return direction_;
+        return x_speed_;
     }
 
-    float speed() const
+    int y_speed() const
     {
-        return speed_;
+        return y_speed_;
+    }
+
+    int angular_speed() const
+    {
+        return angular_speed_;
     }
 
     unsigned char get_type()
@@ -38,8 +47,9 @@ public:
     void unserialize(std::vector<unsigned char> const *str);
 
 private:
-    float direction_ = 0.0;
-    float speed_ = 0.0;
+    int x_speed_ = 0;
+    int y_speed_ = 0;
+    int angular_speed_ = 0;
 };
 
 #endif // MESSAGE_ROBOTCOMMAND_H
