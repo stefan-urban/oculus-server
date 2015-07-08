@@ -5,20 +5,19 @@
 
 #include <string>
 #include <cmath>
+#include <iostream>
 
 
 Robot::Robot()
 {
     port_.open(path_);
     stop();
-    port_.close();
 
     last_cmd_update_ = std::chrono::steady_clock::now();
 }
 
 Robot::~Robot()
 {
-    port_.open(path_);
     stop();
     port_.close();
 }
@@ -66,9 +65,9 @@ void Robot::drive(int fwd, int swd, int ang)
     command.append(std::to_string(ang));
     command.append("\n");
 
-    port_.open(path_);
     port_.write(command.c_str(), command.size());
-    port_.close();
+    std::cout << "cmd: " << command;
+
     //edvs_serial_write(fd_, command.c_str(), command.size());
 }
 
@@ -78,9 +77,9 @@ void Robot::stop()
     command.append("!D0,0,0");
     command.append("\n");
 
-    port_.open(path_);
     port_.write(command.c_str(), command.size());
-    port_.close();
+    std::cout << "cmd: " << command;
+
     //edvs_serial_write(fd_, command.c_str(), command.size());
 }
 
@@ -91,8 +90,8 @@ void Robot::beep()
     command.append("B");
     command.append("\n");
 
-    port_.open(path_);
     port_.write(command.c_str(), command.size());
-    port_.close();
+    std::cout << "cmd: " << command;
+
     //edvs_serial_write(fd_, command.c_str(), command.size());
 }
