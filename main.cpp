@@ -117,7 +117,7 @@ void edvs_app(const std::string uri, int camera_id)
                 continue;
             }
 
-            if (events_buffer.size() > 500)
+            if (events_buffer.size() > 1500)
             {
                 continue;
             }
