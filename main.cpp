@@ -32,11 +32,12 @@ boost::mutex mutex;
 const std::vector<std::string> uris = {
 //    std::string("/dev/ttyUSB0"),
 //    std::string("/dev/ttyUSB1"),
-//    std::string("/dev/ttyUSB2"),
-//    std::string("/dev/ttyUSB3"),
-//    std::string("/dev/ttyUSB4"),
-//    std::string("/dev/ttyUSB5"),
-//    std::string("/dev/ttyUSB6"),
+    std::string("/dev/ttyUSB2"),
+    std::string("/dev/ttyUSB3"),
+    std::string("/dev/ttyUSB4"),
+    std::string("/dev/ttyUSB5"),
+    std::string("/dev/ttyUSB6"),
+    std::string("/dev/ttyUSB7"),
 
 //    std::string("10.162.177.202:7002"),
 //    std::string("10.162.177.202:7003"),
@@ -45,13 +46,13 @@ const std::vector<std::string> uris = {
 //    std::string("10.162.177.202:7006"),
 //    std::string("10.162.177.202:7007"),
 
-    std::string("/dev/edvs_camera_debug_7001"),
+/*    std::string("/dev/edvs_camera_debug_7001"),
     std::string("/dev/edvs_camera_debug_7002"),
     std::string("/dev/edvs_camera_debug_7003"),
     std::string("/dev/edvs_camera_debug_7004"),
     std::string("/dev/edvs_camera_debug_7005"),
     std::string("/dev/edvs_camera_debug_7006"),
-
+*/
 //    std::string("127.0.0.1:7002"),
 //    std::string("127.0.0.1:7003"),
 //    std::string("127.0.0.1:7004"),
