@@ -18,6 +18,8 @@ std::vector<unsigned char> Message_JoystickEvent::serialize()
 
     // Copy
     std::vector<unsigned char> data;
+    data.resize(sizeof(joystick_event_t));
+
     std::memcpy(data.data(), &e, sizeof(joystick_event_t));
 
     return data;
