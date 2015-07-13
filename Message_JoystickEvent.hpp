@@ -4,7 +4,7 @@
 #include <vector>
 #include "Message.hpp"
 
-class Message_JoystickEvent : Message
+class Message_JoystickEvent : public Message
 {
 public:
     enum { type_id = 21 };
@@ -22,8 +22,13 @@ public:
     {
     }
 
+    unsigned char get_type()
+    {
+        return (unsigned char) type_id;
+    }
+
     std::vector<unsigned char> serialize();
-    void unserialize(std::vector<unsigned char> *data);
+    void unserialize(std::vector<unsigned char> const *data);
 
 private:
     int button_;

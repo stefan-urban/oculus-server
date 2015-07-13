@@ -23,7 +23,7 @@ std::vector<unsigned char> Message_JoystickEvent::serialize()
     return data;
 }
 
-void Message_JoystickEvent::unserialize(std::vector<unsigned char> *data)
+void Message_JoystickEvent::unserialize(std::vector<unsigned char> const *data)
 {
     joystick_event_t e;
     std::memcpy(&e, data->data(), sizeof(joystick_event_t));
