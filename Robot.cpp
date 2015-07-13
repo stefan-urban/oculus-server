@@ -39,7 +39,9 @@ void Robot::event(DispatcherEvent* event)
 
         msg_robotcmd.unserialize(event->data());
 
-        if (std::abs(msg_robotcmd.x_speed()) > 0 || std::abs(msg_robotcmd.y_speed()) > 0)
+        if (std::abs(msg_robotcmd.x_speed()) > 0 ||
+            std::abs(msg_robotcmd.y_speed()) > 0 ||
+            std::abs(msg_robotcmd.angular_speed()) > 0)
         {
             drive(msg_robotcmd.x_speed(), msg_robotcmd.y_speed(), msg_robotcmd.angular_speed());
         }
