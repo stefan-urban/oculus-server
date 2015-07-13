@@ -24,7 +24,10 @@ SOURCES += \
     Message_RobotCommand.cpp \
     Message_RobotBeepCommand.cpp \
     SerialCommunication.cpp \
-    Message_EventCollection2.cpp
+    Message_EventCollection2.cpp \
+    Message_JoystickEvent.cpp \
+    App_EdvsCameras.cpp \
+    App_Robot.cpp
 
 HEADERS += \
     TcpSession.hpp \
@@ -43,5 +46,9 @@ HEADERS += \
     Message_RobotCommand.hpp \
     Message_RobotBeepCommand.hpp \
     SerialCommunication.hpp \
-    Message_EventCollection2.hpp
+    Message_EventCollection2.hpp \
+    Message_JoystickEvent.hpp \
+    App_EdvsCameras.hpp \
+    Application.hpp \
+    App_Robot.hpp
 

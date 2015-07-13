@@ -1,7 +1,10 @@
 #include "Robot.hpp"
+
+#include "vendor/edvstools/Edvs/edvs_impl.h"
+
 #include "Message_RobotCommand.hpp"
 #include "Message_RobotBeepCommand.hpp"
-#include "vendor/edvstools/Edvs/edvs_impl.h"
+#include "Message_JoystickEvent.hpp"
 
 #include <string>
 #include <cmath>
@@ -50,6 +53,13 @@ void Robot::event(DispatcherEvent* event)
     else if (event->type() == Message_RobotBeepCommand::type_id)
     {
         beep();
+    }
+    else if (event->type() == Message_JoystickEvent::type_id)
+    {
+        Message_JoystickEvent msg;
+        msg.unserialize(event->data());
+
+        // Now maybe do reset
     }
 }
 

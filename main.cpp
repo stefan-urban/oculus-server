@@ -11,14 +11,17 @@
 
 #include "Robot.hpp"
 #include "TcpServer.hpp"
-#include "Message_EventCollection2.hpp"
-#include "Message_RobotCommand.hpp"
-#include "Message_RobotBeepCommand.hpp"
 #include "SerialCommunication.hpp"
 #include "vendor/edvstools/Edvs/EventStream.hpp"
 #include "vendor/dispatcher/Dispatcher.hpp"
 
+#include "App_EdvsCameras.hpp"
+#include "App_Robot.hpp"
 
+#include "Message_EventCollection2.hpp"
+#include "Message_RobotCommand.hpp"
+#include "Message_RobotBeepCommand.hpp"
+#include "Message_JoystickEvent.hpp"
 
 //#define DEBUG
 
@@ -26,18 +29,18 @@
 int global_stop = 0;
 
 
-std::vector<message_edvs_event_t> events_buffer;
-boost::mutex mutex;
-
 const std::vector<std::string> uris = {
 //    std::string("/dev/ttyUSB0"),
 //    std::string("/dev/ttyUSB1"),
+
+    /*
     std::string("/dev/ttyUSB2"),
     std::string("/dev/ttyUSB3"),
     std::string("/dev/ttyUSB4"),
     std::string("/dev/ttyUSB5"),
     std::string("/dev/ttyUSB6"),
     std::string("/dev/ttyUSB7"),
+    */
 
 //    std::string("10.162.177.202:7002"),
 //    std::string("10.162.177.202:7003"),
@@ -46,13 +49,13 @@ const std::vector<std::string> uris = {
 //    std::string("10.162.177.202:7006"),
 //    std::string("10.162.177.202:7007"),
 
-/*    std::string("/dev/edvs_camera_debug_7001"),
+    std::string("/dev/edvs_camera_debug_7001"),
     std::string("/dev/edvs_camera_debug_7002"),
     std::string("/dev/edvs_camera_debug_7003"),
     std::string("/dev/edvs_camera_debug_7004"),
     std::string("/dev/edvs_camera_debug_7005"),
     std::string("/dev/edvs_camera_debug_7006"),
-*/
+
 //    std::string("127.0.0.1:7002"),
 //    std::string("127.0.0.1:7003"),
 //    std::string("127.0.0.1:7004"),
@@ -65,81 +68,14 @@ const std::vector<std::string> uris = {
 //    std::string("/dev/ttyUSB2?baudrate=4000000")
 };
 
+std::vector<message_edvs_event_t> events_buffer;
+boost::mutex mutex;
+
 void edvs_app(const std::string uri, int camera_id)
 {
-    SerialCommunication port;
+    auto app = App_EdvsCameras(uri, camera_id, &events_buffer, &mutex);
 
-    if (!port.open(uri))
-    {
-        std::cout << "connection to " << uri << " failed" << std::endl;
-        return;
-    }
-
-    std::cout << "connected to " << uri << std::endl;
-
-    // Clear out buffer
-    std::string cmd = "??\n";
-
-    port.write(cmd.c_str(), 3);
-    usleep(10 * 1000);
-
-    port.write(cmd.c_str(), 3);
-    usleep(10 * 1000);
-
-    // Send start command
-    cmd = "E+\n";
-    if (port.write(cmd.c_str(), 3) == -1)
-    {
-        std::cout << "starting command failed" << std::endl;
-        return;
-    }
-
-    //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-
-    while (global_stop == 0)
-    {
-        ssize_t size = 0;
-
-        // Read all pending events
-        while(global_stop == 0)
-        {
-            char buffer[2];
-            size = port.read(buffer, 2);
-
-            if (size != 2)
-            {
-                break;
-            }
-
-            if (!(buffer[0] & 0x80))
-            {
-                port.read(buffer, 1);
-                continue;
-            }
-
-            if (events_buffer.size() > 1500)
-            {
-                continue;
-            }
-
-            // Create event
-            message_edvs_event_t event;
-
-            event.id = camera_id;
-            event.x = buffer[0] & 0x7F;
-            event.y = buffer[1] & 0x7F;
-            event.parity = (buffer[1] & 0x80) ? 1 : 0;
-
-            //auto duration = std::chrono::steady_clock::now() - start;
-            //event.t = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() + 1000000000LL;
-
-            mutex.lock();
-            events_buffer.push_back(event);
-            mutex.unlock();
-        }
-
-        usleep(30 * 1000);
-    }
+    app.run();
 }
 
 void edvs_demo_app()
@@ -220,26 +156,9 @@ void edvs_transmit_app(TcpServer *server)
 
 int robot_movement_control_app(Robot *robot)
 {
-    while (global_stop == 0)
-    {
-        // Timeout for client robot control, 500 ms
-        if (robot->duration_since_last_cmd_update() > 500)
-        {
-            static int counter = 0;
+    auto app = App_Robot(robot);
 
-            robot->stop();
-
-            if (counter++ % 50 == 0)
-            {
-                robot->beep();
-            }
-        }
-
-        // Sleep 0.2 seconds
-        usleep(200 * 1000);
-    }
-
-    return 0;
+    app.run();
 }
 
 int main(int /*argc*/, char** /*argv[]*/)
@@ -253,7 +172,7 @@ int main(int /*argc*/, char** /*argv[]*/)
     auto dispatcher = new Dispatcher();
     dispatcher->addListener(&robot, Message_RobotCommand::type_id);
     dispatcher->addListener(&robot, Message_RobotBeepCommand::type_id);
-
+    dispatcher->addListener(&robot, Message_JoystickEvent::type_id);
 
     // Setup TCP server
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), 4000);
