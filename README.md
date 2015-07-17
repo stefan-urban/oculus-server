@@ -23,7 +23,7 @@ All in one command:<br>
 
 # Starting
 
-Run application with `./oculus-server`
+Running the application with `./oculus-server` will open a server at port `4000`.
 
 
 
